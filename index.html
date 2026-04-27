@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio de Recursos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .link-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-6">
+
+    <div class="w-full max-w-md">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <div class="inline-block p-3 bg-blue-600 rounded-2xl shadow-lg shadow-blue-200 mb-4">
+                <i data-lucide="layout-grid" class="w-8 h-8 text-white"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Recursos</h1>
+            <p class="text-slate-500 mt-2">Selecciona un módulo para continuar</p>
+        </header>
+
+        <!-- Container de enlaces -->
+        <div id="lista-enlaces" class="space-y-4">
+            <!-- Los enlaces se cargarán aquí mediante JS -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center">
+            <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold">Plataforma Educativa &copy; 2024
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 1. Datos enriquecidos con iconos y descripciones
+        const paginas = [
+            {
+                nombre: "Ecosistemas",
+                url: "apps/ecosistemas.html",
+                desc: "Explora la biodiversidad y el medio ambiente",
+                icon: "leaf",
+                color: "text-emerald-500"
+            },
+            {
+                nombre: "Relojes",
+                url: "apps/relojes.html",
+                desc: "Gestión del tiempo y cronometría",
+                icon: "clock",
+                color: "text-blue-500"
+            },
+            {
+                nombre: "Verbos Irregulares",
+                url: "apps/verbos_irregulares.html",
+                desc: "Guía de gramática y conjugación",
+                icon: "languages",
+                color: "text-amber-500"
+            }
+        ];
+
+        const contenedor = document.getElementById('lista-enlaces');
+
+        // 2. Función para renderizar los enlaces
+        function renderLinks() {
+            contenedor.innerHTML = paginas.map(pagina => `
+                <a href="${pagina.url}" class="link-card flex items-center p-4 bg-white border border-slate-100 rounded-2xl group">
+                    <div class="flex-shrink-0 p-3 bg-slate-50 rounded-xl group-hover:bg-blue-50 transition-colors mr-4">
+                        <i data-lucide="${pagina.icon}" class="w-6 h-6 ${pagina.color}"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
+                            ${pagina.nombre}
+                        </h3>
+                        <p class="text-sm text-slate-400 line-clamp-1">
+                            ${pagina.desc}
+                        </p>
+                    </div>
+                    <div class="ml-2 text-slate-300 group-hover:text-blue-400 transition-colors">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </div>
+                </a>
+            `).join('');
+
+            // Inicializar iconos después de renderizar el HTML
+            lucide.createIcons();
+        }
+
+        // Ejecutar al cargar la página
+        window.onload = renderLinks;
+    </script>
+
+</body>
+
+</html>
