@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Pop: ¡Aprende la Hora!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+        }
+
+        .pop-button {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .pop-button:active {
+            transform: scale(0.9);
+        }
+
+        .level-tab {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .level-tab.active {
+            background-color: #facc15;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(250, 204, 21, 0.4);
+        }
+
+        .clock-face {
+            fill: #fff;
+            stroke: #ff007a;
+            stroke-width: 8;
+        }
+
+        .hour-hand {
+            stroke: #1a1a1a;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .minute-hand {
+            stroke: #ff007a;
+            stroke-width: 5;
+            stroke-linecap: round;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .center-dot {
+            fill: #ff007a;
+        }
+
+        .number-text {
+            font-weight: 900;
+            fill: #764ba2;
+            font-size: 24px;
+        }
+
+        @keyframes pulse-music {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse-music 2s infinite;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <div id="app" class="max-w-md w-full text-white text-center">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-5xl font-black italic tracking-tighter uppercase mb-2">
+                Time <span class="text-pink-400">Pop!</span>
+            </h1>
+            
+            <!-- Level Selector -->
+            <div class="flex justify-center gap-1 mb-4 overflow-x-auto py-2">
+                <button onclick="setManualLevel(1)" id="tab-1" class="level-tab active bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase">En punto</button>
+                <button onclick="setManualLevel(2)" id="tab-2" class="level-tab bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase">Y media</button>
+                <button onclick="setManualLevel(3)" id="tab-3" class="level-tab bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase">Cuartos</button>
+                <button onclick="setManualLevel(4)" id="tab-4" class="level-tab bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase">Master</button>
+            </div>
+
+            <div class="flex justify-center gap-2">
+                <span id="score-badge" class="bg-white/20 border border-white/30 text-white px-4 py-1 rounded-full font-bold text-sm">
+                    PUNTOS: 0
+                </span>
+                <span id="level-badge" class="bg-cyan-400 text-black px-4 py-1 rounded-full font-bold text-sm uppercase">
+                    NIVEL: 1
+                </span>
+            </div>
+        </div>
+
+        <!-- Main Card -->
+        <div class="glass-card p-8 shadow-2xl relative">
+            <div id="celebration-overlay" class="hidden absolute inset-0 flex flex-col items-center justify-center z-50 bg-black/60 rounded-[2rem] backdrop-blur-sm">
+                <h2 class="text-4xl font-black text-yellow-300 mb-2 drop-shadow-lg uppercase italic">¡BRUTAL! 🎤</h2>
+                <p class="text-xl font-bold text-white">¡A ritmo de estrella!</p>
+            </div>
+
+            <!-- The Clock -->
+            <div class="flex justify-center mb-8 pulse">
+                <svg width="260" height="260" viewBox="0 0 300 300" id="analog-clock">
+                    <circle cx="150" cy="150" r="140" class="clock-face shadow-lg" />
+                    
+                    <!-- Numbers -->
+                    <g id="clock-numbers"></g>
+
+                    <!-- Hands -->
+                    <line id="hour-hand" x1="150" y1="150" x2="150" y2="85" class="hour-hand" />
+                    <line id="minute-hand" x1="150" y1="150" x2="150" y2="55" class="minute-hand" />
+                    <circle cx="150" cy="150" r="6" class="center-dot" />
+                </svg>
+            </div>
+
+            <!-- Question Area -->
+            <div id="question-box" class="mb-6">
+                <p class="text-gray-200 text-lg mb-4 font-bold uppercase tracking-widest">¿Qué hora marca el ritmo?</p>
+                <div id="options-grid" class="grid grid-cols-2 gap-4">
+                    <!-- Buttons -->
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 text-sm text-white/60 font-bold uppercase tracking-widest">
+            🎸 ¡Eres el DJ del tiempo! 🎸
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let level = 1;
+        let currentTargetTime = { h: 12, m: 0 };
+        const celebrationMessages = ["¡INCREÍBLE!", "¡QUÉ ESTILO!", "¡A TOPE!", "¡RITMO PRO!", "¡MAGNÍFICO!", "¡LEVEL UP!"];
+
+        // Init Clock Numbers
+        const numbersGroup = document.getElementById('clock-numbers');
+        for (let i = 1; i <= 12; i++) {
+            const angle = (i * 30) * (Math.PI / 180);
+            const x = 150 + 110 * Math.sin(angle);
+            const y = 150 - 110 * Math.cos(angle);
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', x);
+            text.setAttribute('y', y + 10);
+            text.setAttribute('text-anchor', 'middle');
+            text.classList.add('number-text');
+            text.textContent = i;
+            numbersGroup.appendChild(text);
+        }
+
+        function setManualLevel(l) {
+            level = l;
+            document.querySelectorAll('.level-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${l}`).classList.add('active');
+            document.getElementById('level-badge').textContent = `NIVEL: ${level}`;
+            generateQuestion();
+        }
+
+        function updateClock(h, m) {
+            const hourDeg = (h % 12) * 30 + (m / 60) * 30;
+            const minDeg = m * 6;
+            document.getElementById('hour-hand').setAttribute('transform', `rotate(${hourDeg}, 150, 150)`);
+            document.getElementById('minute-hand').setAttribute('transform', `rotate(${minDeg}, 150, 150)`);
+        }
+
+        function formatTime(h, m) {
+            if (m === 0) return `${h}:00`;
+            if (m < 10) return `${h}:0${m}`;
+            return `${h}:${m}`;
+        }
+
+        function generateQuestion() {
+            let h = Math.floor(Math.random() * 12) + 1;
+            let m = 0;
+
+            if (level === 1) {
+                m = 0;
+            } else if (level === 2) {
+                // Forzar que salgan medias horas más a menudo en este nivel
+                m = Math.random() > 0.3 ? 30 : 0;
+            } else if (level === 3) {
+                const options = [0, 15, 30, 45];
+                m = options[Math.floor(Math.random() * options.length)];
+            } else {
+                m = Math.floor(Math.random() * 12) * 5;
+            }
+
+            currentTargetTime = { h, m };
+            updateClock(h, m);
+
+            const correctText = formatTime(h, m);
+            let options = [correctText];
+
+            while (options.length < 4) {
+                let rh = Math.floor(Math.random() * 12) + 1;
+                let rm = 0;
+                
+                if (level === 1) rm = 0;
+                else if (level === 2) rm = Math.random() > 0.5 ? 30 : 0;
+                else if (level === 3) rm = [0, 15, 30, 45][Math.floor(Math.random() * 4)];
+                else rm = Math.floor(Math.random() * 12) * 5;
+
+                let rText = formatTime(rh, rm);
+                if (!options.includes(rText)) options.push(rText);
+            }
+
+            options.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'pop-button bg-white text-[#764ba2] hover:bg-pink-500 hover:text-white py-4 px-2 rounded-2xl font-black text-2xl shadow-lg transition-all border-b-4 border-gray-200 active:border-b-0 active:translate-y-1';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt === correctText, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(isCorrect, btn) {
+            if (isCorrect) {
+                score += 10;
+                
+                // Faster progression: 3 correct answers to level up
+                if (score >= 30 && level === 1) setManualLevel(2);
+                else if (score >= 70 && level === 2) setManualLevel(3);
+                else if (score >= 120 && level === 3) setManualLevel(4);
+
+                document.getElementById('score-badge').textContent = `PUNTOS: ${score}`;
+                celebrate();
+            } else {
+                btn.classList.add('bg-red-500', 'text-white', 'shake');
+                setTimeout(() => btn.classList.remove('bg-red-500', 'text-white', 'shake'), 500);
+            }
+        }
+
+        function celebrate() {
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.7 },
+                colors: ['#ff007a', '#764ba2', '#41e1fa', '#f7eb07']
+            });
+
+            const overlay = document.getElementById('celebration-overlay');
+            overlay.querySelector('h2').textContent = celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)];
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+                generateQuestion();
+            }, 1000);
+        }
+
+        window.onload = () => {
+            generateQuestion();
+        };
+    </script>
+</body>
+</html>
