@@ -46,7 +46,6 @@
   </div>
 
   <script>
-    // BASE DE DATOS DE 40 PREGUNTAS (Basada en el PDF)
     const QUESTIONS_DATABASE = [
       { id: 1, question: "¿Qué es un ecosistema?", options: ["Un grupo de animales", "El conjunto de seres vivos, el medio físico y sus relaciones", "Un lugar donde solo hay plantas", "Un parque construido por el hombre"], correct: 1, icon: "fa-map-marked-alt", color: "text-indigo-500" },
       { id: 2, question: "¿Qué diferencia a un ecosistema natural de uno artificial?", options: ["El color", "La intervención humana", "La presencia de agua", "El tamaño"], correct: 1, icon: "fa-city", color: "text-gray-500" },
@@ -90,7 +89,9 @@
       { id: 40, question: "La escasez de lluvias es propia de:", options: ["La Selva", "El Desierto cálido", "El Bosque templado", "Los Ríos"], correct: 1, icon: "fa-sun", color: "text-orange-300" }
     ];
 
-    const QUESTIONS_PER_GAME = 10;
+    const QUESTIONS_PER_GAME = 15;
+    const MAX_PLAYTIME = 30;
+
     let currentQuestions = [];
     let currentIndex = 0;
     let score = 0;
@@ -128,13 +129,13 @@
                         </div>
                     </div>
                     <div class="space-y-4">
-                        <h2 class="text-4xl font-black text-slate-900 uppercase">MISIÓN: GUARDIÁN</h2>
+                        <h2 class="text-4xl font-black text-slate-900 uppercase leading-tight">DESAFÍO DE 15 PREGUNTAS</h2>
                         <p class="text-slate-500 text-lg leading-relaxed px-4">
-                            Demuestra cuánto sabes sobre el planeta. Consigue el <span class="font-bold text-indigo-600 underline">70% de aciertos</span> para ganar tiempo de juego.
+                            Consigue el <span class="font-bold text-indigo-600 underline">70% de aciertos</span> (11 preguntas) para ganar hasta <span class="font-bold text-indigo-600">${MAX_PLAYTIME} minutos</span> de juego.
                         </p>
                     </div>
                     <button onclick="startGame()" class="group flex items-center gap-4 mx-auto bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-6 rounded-3xl text-2xl font-black transition-all shadow-lg hover:scale-105 active:scale-95">
-                        ¡COMENZAR RETO!
+                        ¡COMENZAR!
                         <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
                     </button>
                 </div>
@@ -167,8 +168,8 @@
 
                     <div class="grid gap-4" id="options-container">
                         ${question.options.map((option, idx) => `
-                            <button onclick="handleAnswer(${idx})" id="opt-${idx}" class="option-btn w-full p-6 text-left rounded-2xl border-4 border-slate-50 bg-slate-50 hover:border-indigo-400 hover:bg-indigo-50 hover:translate-x-2 transition-all text-xl font-bold flex justify-between items-center">
-                                <span>${option}</span>
+                            <button onclick="handleAnswer(${idx})" id="opt-${idx}" class="option-btn w-full p-5 text-left rounded-2xl border-4 border-slate-50 bg-slate-50 hover:border-indigo-400 hover:bg-indigo-50 hover:translate-x-2 transition-all text-lg font-bold flex justify-between items-center">
+                                <span class="pr-4">${option}</span>
                                 <span id="icon-${idx}"></span>
                             </button>
                         `).join('')}
@@ -191,7 +192,6 @@
 
       if (isCorrect) score++;
 
-      // Visual feedback
       const btns = document.querySelectorAll('.option-btn');
       btns.forEach((btn, idx) => {
         btn.disabled = true;
@@ -218,13 +218,15 @@
         } else {
           renderResult();
         }
-      }, 1200);
+      }, 1100);
     }
 
     function renderResult() {
       const percentage = Math.round((score / QUESTIONS_PER_GAME) * 100);
       const isWinner = percentage >= 70;
-      const playTime = isWinner ? score * 5 : 0;
+
+      const calculatedTime = score * 2;
+      const playTime = isWinner ? Math.min(MAX_PLAYTIME, calculatedTime) : 0;
 
       appContainer.innerHTML = `
                 <div class="bg-gradient-to-r from-indigo-600 to-violet-600 p-6 text-white flex justify-between items-center">
@@ -256,26 +258,25 @@
                                 <i class="fas fa-clock text-indigo-300"></i>
                                 ${playTime} MIN
                             </div>
-                            <p class="text-indigo-200 font-bold italic">¡Tiempo de juego ganado!</p>
+                            <p class="text-indigo-200 font-bold italic">¡Has ganado tiempo de juego real!</p>
                         </div>
                     ` : `
                         <div class="bg-white border-4 border-red-50 p-8 rounded-[3rem] shadow-lg">
-                            <p class="text-slate-600 font-bold leading-relaxed">
-                                Te has quedado cerca del <span class="text-red-500 font-black">70%</span>. <br/>
-                                Vuelve a repasar el documento y ¡gana ese tiempo de juego!
+                            <p class="text-slate-600 font-bold leading-relaxed px-4">
+                                Te has quedado cerca del <span class="text-red-500 font-black">70%</span> (11 aciertos). <br/>
+                                Repasa el PDF y ¡vuelve a intentarlo para ganar el tiempo!
                             </p>
                         </div>
                     `}
 
                     <button onclick="startGame()" class="w-full bg-slate-900 hover:bg-black text-white p-7 rounded-3xl text-2xl font-black transition-all shadow-2xl flex items-center justify-center gap-4 active:scale-95">
                         <i class="fas fa-sync-alt"></i>
-                        NUEVO INTENTO
+                        NUEVA RONDA
                     </button>
                 </div>
             `;
     }
 
-    // Iniciar al cargar
     init();
   </script>
 </body>
