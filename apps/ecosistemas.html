@@ -49,6 +49,10 @@
       background: #cbd5e1;
       border-radius: 10px;
     }
+
+    .timer-bar {
+      transition: width 1s linear;
+    }
   </style>
 </head>
 
@@ -56,62 +60,67 @@
 
   <div id="app"
     class="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border-8 border-white relative">
-    <!-- El contenido se genera mediante JavaScript -->
+    <!-- O conteúdo é gerado por JavaScript -->
   </div>
 
   <script>
-    // BASE DE DATOS DE 40 PREGUNTAS (Basada en el PDF)
     const QUESTIONS_DATABASE = [
-      { id: 1, question: "¿Qué es un ecosistema?", options: ["Un grupo de animales", "El conjunto de seres vivos, el medio físico y sus relaciones", "Un lugar donde solo hay plantas", "Un parque construido por el hombre"], correct: 1, icon: "fa-map-marked-alt", color: "text-indigo-500" },
-      { id: 2, question: "¿Qué diferencia a un ecosistema natural de uno artificial?", options: ["El color", "La intervención humana", "La presencia de agua", "El tamaño"], correct: 1, icon: "fa-city", color: "text-gray-500" },
-      { id: 3, question: "Los ecosistemas naturales se dividen principalmente en:", options: ["Grandes y pequeños", "Terrestres y acuáticos", "Calientes y fríos", "Con luz y sin luz"], correct: 1, icon: "fa-compass", color: "text-blue-500" },
-      { id: 4, question: "¿Cómo se llama el conjunto de seres vivos de un ecosistema?", options: ["Biocenosis", "Biotipo", "Población", "Zoológico"], correct: 0, icon: "fa-leaf", color: "text-green-500" },
-      { id: 5, question: "¿Qué es el medio físico o biotipo?", options: ["Los animales", "El lugar y sus condiciones (luz, suelo, agua...)", "Las plantas", "Las relaciones familiares"], correct: 1, icon: "fa-mountain", color: "text-stone-500" },
-      { id: 6, question: "¿Cuáles son los factores principales en los ecosistemas terrestres?", options: ["La profundidad y el color", "La temperatura y la humedad", "La cantidad de peces", "La velocidad del viento"], correct: 1, icon: "fa-bolt", color: "text-yellow-500" },
-      { id: 7, question: "En el desierto cálido, ¿qué ocurre con las temperaturas?", options: ["Son bajas siempre", "Altas de día y muy bajas de noche", "Constantes todo el año", "Siempre llueve"], correct: 1, icon: "fa-sun", color: "text-orange-500" },
-      { id: 8, question: "¿Qué animales son comunes en el desierto cálido?", options: ["Osos y pingüinos", "Escorpiones, camellos y reptiles", "Monos y tucanes", "Elefantes y jirafas"], correct: 1, icon: "fa-sun", color: "text-orange-400" },
-      { id: 9, question: "En el desierto frío, ¿en qué forma cae la precipitación?", options: ["Lluvia ácida", "Nieve", "Granizo gigante", "No hay precipitación"], correct: 1, icon: "fa-snowflake", color: "text-blue-200" },
-      { id: 10, question: "¿Qué plantas se adaptan mejor al desierto cálido?", options: ["Musgos", "Cactus y palmeras", "Pinos", "Árboles de hoja caduca"], correct: 1, icon: "fa-sun", color: "text-yellow-600" },
-      { id: 11, question: "¿Cómo es el clima en la Selva?", options: ["Frío y seco", "Altas temperaturas y mucha lluvia", "Templado y ventoso", "Extremo de día y noche"], correct: 1, icon: "fa-cloud-showers-heavy", color: "text-teal-600" },
-      { id: 12, question: "¿En qué ecosistema hay árboles de hoja caduca que caen en otoño?", options: ["Selva", "Bosque templado", "Taiga", "Sabana"], correct: 1, icon: "fa-leaf", color: "text-orange-500" },
-      { id: 13, question: "La Sabana se caracteriza por tener:", options: ["Bosques muy densos", "Temperaturas altas y hierbas altas con árboles dispersos", "Hielo perpetuo", "Cactus gigantes"], correct: 1, icon: "fa-sun", color: "text-amber-500" },
-      { id: 14, question: "Los bosques de coníferas (pinos y abetos) son típicos de:", options: ["La Selva", "La Taiga", "El Desierto", "La Costa"], correct: 1, icon: "fa-tree", color: "text-emerald-800" },
-      { id: 15, question: "¿Cuál es una característica de la Taiga?", options: ["Mucho calor", "Temperaturas bajas y mucha nieve", "Lluvia diaria", "Ausencia de árboles"], correct: 1, icon: "fa-snowflake", color: "text-blue-400" },
-      { id: 16, question: "¿Qué animales son típicos de la Sabana?", options: ["Lince y lobo", "Elefante, jirafa y león", "Oso polar", "Camello"], correct: 1, icon: "fa-hippo", color: "text-yellow-700" },
-      { id: 17, question: "¿Dónde encontramos una vegetación muy densa y siempre verde?", options: ["Bosque templado", "Selva", "Sabana", "Taiga"], correct: 1, icon: "fa-tree", color: "text-green-700" },
-      { id: 18, question: "¿Qué define a los ecosistemas marinos?", options: ["Tienen baja salinidad", "Tienen alta salinidad", "No tienen vida", "Son solo artificiales"], correct: 1, icon: "fa-water", color: "text-blue-600" },
-      { id: 19, question: "¿A qué profundidad llega la 'Zona Costera'?", options: ["Más de 1.000m", "Entre 0 y 200 metros", "Entre 200 y 1.000m", "Hasta el fondo"], correct: 1, icon: "fa-sun", color: "text-yellow-500" },
-      { id: 20, question: "¿Por qué los productores se sitúan en la Zona Costera?", options: ["Porque el agua es más dulce", "Porque necesitan la luz del sol", "Porque hay menos peces", "Porque hace más calor"], correct: 1, icon: "fa-sun", color: "text-amber-400" },
-      { id: 21, question: "La Zona Media del océano se encuentra entre:", options: ["0 y 200m", "200 y 1.000 metros", "1.000 y 5.000m", "Solo en la orilla"], correct: 1, icon: "fa-water", color: "text-blue-700" },
-      { id: 22, question: "¿Qué ocurre con la fotosíntesis en la Zona Media (200-1000m)?", options: ["Es muy rápida", "Es imposible porque hay muy poca luz", "Solo ocurre de noche", "Las plantas crecen mucho"], correct: 1, icon: "fa-eye-slash", color: "text-indigo-800" },
-      { id: 23, question: "¿Cómo se llama la zona más profunda del océano (más de 1.000m)?", options: ["Zona Costera", "Zona Abisal", "Zona Media", "Zona de Luz"], correct: 1, icon: "fa-fish", color: "text-slate-900" },
-      { id: 24, question: "¿De qué se alimentan los peces de la Zona Abisal?", options: ["De algas", "De restos de seres vivos que caen al fondo", "De luz solar", "De frutos marinos"], correct: 1, icon: "fa-skull", color: "text-gray-400" },
-      { id: 25, question: "¿En qué zona encontramos organismos movidos por el agua o nadando?", options: ["Solo en la abisal", "En la zona costera", "En el centro de la tierra", "Solo en acuarios"], correct: 1, icon: "fa-water", color: "text-cyan-400" },
-      { id: 26, question: "¿Qué ecosistemas tienen baja salinidad?", options: ["Océanos", "Ríos, lagos y estanques", "Mares", "Sala de juegos"], correct: 1, icon: "fa-droplet", color: "text-cyan-600" },
-      { id: 27, question: "¿Por qué hay muchas plantas y algas en ríos y lagos?", options: ["Porque no hay peces", "Porque reciben mucha luz al ser poco profundos", "Porque el agua es salada", "Porque el hombre las planta"], correct: 1, icon: "fa-sun", color: "text-yellow-400" },
-      { id: 28, question: "Un ejemplo de ecosistema de agua dulce es:", options: ["El Océano Atlántico", "Un riachuelo", "El Mar Mediterráneo", "Una piscina con sal"], correct: 1, icon: "fa-tint", color: "text-blue-500" },
-      { id: 29, question: "¿Quiénes fabrican su propio alimento con luz solar?", options: ["Consumidores", "Productores", "Descomponedores", "Humanos"], correct: 1, icon: "fa-leaf", color: "text-emerald-500" },
-      { id: 30, question: "¿Cómo se llaman los animales herbívoros en la cadena?", options: ["Consumidores primarios", "Consumidores secundarios", "Productores", "Jefes"], correct: 0, icon: "fa-fish", color: "text-green-400" },
-      { id: 31, question: "Los consumidores secundarios son animales:", options: ["Herbívoros", "Carnívoros (se alimentan de otros animales)", "Que comen rocas", "Que no comen"], correct: 1, icon: "fa-bolt", color: "text-red-500" },
-      { id: 32, question: "Los hongos y bacterias suelen ser:", options: ["Productores", "Descomponedores", "Consumidores primarios", "Depredadores"], correct: 1, icon: "fa-microbe", color: "text-stone-500" },
-      { id: 33, question: "¿Qué transforman los descomponedores?", options: ["Luz en comida", "Restos orgánicos en sustancias minerales", "Agua en vino", "Aire en fuego"], correct: 1, icon: "fa-recycle", color: "text-amber-700" },
-      { id: 34, question: "Un león que come una gacela es un:", options: ["Productor", "Consumidor secundario", "Consumidor primario", "Descomponedor"], correct: 1, icon: "fa-paw", color: "text-orange-600" },
-      { id: 35, question: "¿Qué es un ecosistema artificial?", options: ["Uno que tiene mucha lluvia", "Uno creado por la acción humana con un fin", "Uno donde no hay vida", "Uno que está bajo tierra"], correct: 1, icon: "fa-tools", color: "text-slate-600" },
-      { id: 36, question: "Son ejemplos de ecosistemas artificiales:", options: ["Selva y Sabana", "Ciudades y campos de cultivo", "Océanos y Ríos", "Desiertos"], correct: 1, icon: "fa-building", color: "text-indigo-400" },
-      { id: 37, question: "¿Cómo se llama el proceso de alimentarse unos de otros?", options: ["Fotosíntesis", "Cadena alimentaria", "Respiración", "Clasificación"], correct: 1, icon: "fa-link", color: "text-blue-500" },
-      { id: 38, question: "¿Qué le ocurre a los árboles del bosque templado en invierno?", options: ["Se queman", "Muchos pierden sus hojas", "Crecen más rápido", "Se vuelven cactus"], correct: 1, icon: "fa-leaf", color: "text-orange-700" },
-      { id: 39, question: "En el ecosistema, los seres vivos se relacionan entre sí y con:", options: ["El espacio exterior", "El medio físico", "Nada más", "Otros planetas"], correct: 1, icon: "fa-sync", color: "text-teal-400" },
-      { id: 40, question: "La escasez de lluvias es propia de:", options: ["La Selva", "El Desierto cálido", "El Bosque templado", "Los Ríos"], correct: 1, icon: "fa-sun", color: "text-orange-300" }
+      { id: 1, question: "¿Qué es un ecosistema?", options: ["Un grupo de animales de la misma especie", "El conjunto de seres vivos, el medio físico y sus relaciones", "Un lugar donde solo hay plantas y agua", "Un parque construido por el hombre para animales"], correct: 1, icon: "fa-map-marked-alt", color: "text-indigo-500" },
+      { id: 2, question: "¿Qué diferencia a un ecosistema natural de uno artificial?", options: ["El color de la vegetación", "La intervención o creación por parte del ser humano", "La presencia de agua dulce o salada", "El tamaño de los animales que lo habitan"], correct: 1, icon: "fa-city", color: "text-gray-500" },
+      { id: 3, question: "Los ecosistemas naturales se clasifican según el medio en:", options: ["Grandes y pequeños", "Terrestres y acuáticos", "Calientes y fríos", "Productores y consumidores"], correct: 1, icon: "fa-compass", color: "text-blue-500" },
+      { id: 4, question: "¿Cómo se llama técnicamente al conjunto de seres vivos de un ecosistema?", options: ["Biocenosis", "Biotipo", "Población estática", "Comunidad artificial"], correct: 0, icon: "fa-leaf", color: "text-green-500" },
+      { id: 5, question: "El 'Biotipo' se refiere a:", options: ["Los animales herbívoros", "El lugar físico y sus condiciones (luz, suelo, agua...)", "Las relaciones entre depredadores", "La suma de todas las plantas"], correct: 1, icon: "fa-mountain", color: "text-stone-500" },
+      { id: 6, question: "En ecosistemas terrestres, ¿qué factores son los más determinantes?", options: ["La profundidad y la salinidad", "La temperatura y la humedad", "La velocidad del viento y la arena", "La altitud y el tipo de rocas"], correct: 1, icon: "fa-bolt", color: "text-yellow-500" },
+      { id: 7, question: "¿Cuál es la característica térmica del desierto cálido?", options: ["Altas siempre", "Altas de día y muy bajas de noche", "Bajas todo el año", "Constantes (25ºC)"], correct: 1, icon: "fa-sun", color: "text-orange-500" },
+      { id: 8, question: "Animales típicos del desierto cálido son:", options: ["Osos, lobos y zorros", "Escorpiones, camellos y serpientes", "Monos, tigres y tucanes", "Pingüinos y focas"], correct: 1, icon: "fa-sun", color: "text-orange-400" },
+      { id: 9, question: "En el desierto frío, las escasas precipitaciones son en forma de:", options: ["Lluvia fina", "Nieve", "Granizo", "No hay ninguna forma de agua"], correct: 1, icon: "fa-snowflake", color: "text-blue-200" },
+      { id: 10, question: "¿Qué plantas se adaptan mejor al desierto cálido?", options: ["Musgos y helechos", "Cactus y palmeras", "Pinos y abetos", "Árboles de hoja caduca"], correct: 1, icon: "fa-sun", color: "text-yellow-600" },
+      { id: 11, question: "¿Qué clima define a la Selva?", options: ["Frío y seco con vientos", "Altas temperaturas y lluvias abundantes", "Templado con estaciones marcadas", "Extremo con heladas nocturnas"], correct: 1, icon: "fa-cloud-showers-heavy", color: "text-teal-600" },
+      { id: 12, question: "¿Dónde encontramos árboles de hoja caduca que caen en otoño?", options: ["En la Selva", "En el Bosque templado", "En la Taiga", "En la Sabana"], correct: 1, icon: "fa-leaf", color: "text-orange-500" },
+      { id: 13, question: "La Sabana se reconoce por:", options: ["Bosques impenetrables", "Temperaturas altas y hierbas altas con árboles dispersos", "Hielo perpetuo y falta de luz", "Lluvias diarias constantes"], correct: 1, icon: "fa-sun", color: "text-amber-500" },
+      { id: 14, question: "Los bosques de coníferas (pinos y abetos) dominan en:", options: ["La Selva ecuatorial", "La Taiga", "El Desierto frío", "La Costa mediterránea"], correct: 1, icon: "fa-tree", color: "text-emerald-800" },
+      { id: 15, question: "La Taiga se caracteriza por:", options: ["Calor extremo", "Temperaturas bajas y abundante nieve", "Lluvias tropicales", "Ausencia total de árboles"], correct: 1, icon: "fa-snowflake", color: "text-blue-400" },
+      { id: 16, question: "Elefantes, jirafas y leones son propios de:", options: ["El Bosque templado", "La Sabana", "La Taiga", "La Selva"], correct: 1, icon: "fa-hippo", color: "text-yellow-700" },
+      { id: 17, question: "¿Qué ecosistema tiene vegetación densa y siempre verde?", options: ["La Taiga", "La Selva", "El Desierto cálido", "El Bosque templado"], correct: 1, icon: "fa-tree", color: "text-green-700" },
+      { id: 18, question: "Los ecosistemas marinos se distinguen por:", options: ["Baja salinidad", "Alta salinidad", "Agua estancada", "Falta de oxígeno"], correct: 1, icon: "fa-water", color: "text-blue-600" },
+      { id: 19, question: "¿Qué profundidad abarca la 'Zona Costera'?", options: ["Más de 1.000m", "De 0 a 200 metros", "De 200 a 1.000m", "De 500 a 800m"], correct: 1, icon: "fa-sun", color: "text-yellow-500" },
+      { id: 20, question: "¿Por qué los productores viven en la Zona Costera?", options: ["Por la baja presión", "Porque necesitan la luz solar para la fotosíntesis", "Porque no hay depredadores", "Porque el agua está más fría"], correct: 1, icon: "fa-sun", color: "text-amber-400" },
+      { id: 21, question: "La Zona Media oceánica se sitúa entre:", options: ["0 y 200m", "200 y 1.000 metros", "1.000 y 4.000m", "Solo cerca de las islas"], correct: 1, icon: "fa-water", color: "text-blue-700" },
+      { id: 22, question: "En la Zona Media (200-1000m):", options: ["Hay mucha luz y algas", "Hay muy poca luz y la fotosíntesis es imposible", "El agua es dulce", "Viven los camellos marinos"], correct: 1, icon: "fa-eye-slash", color: "text-indigo-800" },
+      { id: 23, question: "La 'Zona Abisal' comienza a partir de:", options: ["Los 200m", "Los 1.000 metros de profundidad", "Los 500m", "El fondo de los ríos"], correct: 1, icon: "fa-fish", color: "text-slate-900" },
+      { id: 24, question: "Los peces abisales se alimentan de:", options: ["Plancton de superficie", "Restos de seres vivos que caen al fondo", "Luz de volcanes", "Algas del fondo"], correct: 1, icon: "fa-skull", color: "text-gray-400" },
+      { id: 25, question: "¿Dónde hay organismos movidos por el agua o nadadores?", options: ["Solo en la abisal", "En la zona costera (0-200m)", "En el centro del océano profundo", "Bajo la arena del desierto"], correct: 1, icon: "fa-water", color: "text-cyan-400" },
+      { id: 26, question: "Ríos, lagos y estanques tienen:", options: ["Alta salinidad", "Baja salinidad", "Agua sin oxígeno", "Salinidad variable extrema"], correct: 1, icon: "fa-droplet", color: "text-cyan-600" },
+      { id: 27, question: "¿Por qué hay tantas plantas en ríos y lagos?", options: ["Por la falta de corriente", "Porque reciben mucha luz al ser poco profundos", "Porque el agua es salada", "Porque los humanos las plantan"], correct: 1, icon: "fa-sun", color: "text-yellow-400" },
+      { id: 28, question: "Es un ecosistema de agua dulce:", options: ["Océano Pacífico", "Un riachuelo", "Mar Cantábrico", "Mar Muerto"], correct: 1, icon: "fa-tint", color: "text-blue-500" },
+      { id: 29, question: "Los seres vivos que fabrican su alimento son:", options: ["Consumidores", "Productores", "Descomponedores", "Biotipos"], correct: 1, icon: "fa-leaf", color: "text-emerald-500" },
+      { id: 30, question: "Los consumidores primarios son:", options: ["Animales herbívoros", "Animales carnívoros", "Hongos y bacterias", "Plantas verdes"], correct: 0, icon: "fa-fish", color: "text-green-400" },
+      { id: 31, question: "Los consumidores secundarios se definen como:", options: ["Herbívoros", "Carnívoros (se alimentan de otros animales)", "Fabricantes de oxígeno", "Animales que no comen"], correct: 1, icon: "fa-bolt", color: "text-red-500" },
+      { id: 32, question: "Hongos y bacterias actúan como:", options: ["Productores", "Descomponedores", "Consumidores primarios", "Medio físico"], correct: 1, icon: "fa-microbe", color: "text-stone-500" },
+      { id: 33, question: "Los descomponedores transforman restos orgánicos en:", options: ["Oxígeno puro", "Sustancias minerales", "Agua dulce", "Energía eléctrica"], correct: 1, icon: "fa-recycle", color: "text-amber-700" },
+      { id: 34, question: "Una cadena alimentaria muestra:", options: ["Cómo crecen los árboles", "Las relaciones de alimentación en el ecosistema", "El mapa de un río", "La temperatura del suelo"], correct: 1, icon: "fa-link", color: "text-orange-600" },
+      { id: 35, question: "Un ecosistema artificial es aquel:", options: ["Que no tiene agua", "Creado por la acción humana con un fin", "Donde no viven animales", "Que está bajo cúpulas"], correct: 1, icon: "fa-tools", color: "text-slate-600" },
+      { id: 36, question: "Ejemplos claros de ecosistema artificial:", options: ["Selva y Ríos", "Ciudades y campos de cultivo", "Océanos y Taiga", "Sabana y Cuevas"], correct: 1, icon: "fa-building", color: "text-indigo-400" },
+      { id: 37, question: "¿Qué ocurre en la Zona Media con la fotosíntesis?", options: ["Es muy activa", "Es imposible por falta de luz", "Solo ocurre a mediodía", "La hacen los peces"], correct: 1, icon: "fa-eye-slash", color: "text-blue-500" },
+      { id: 38, question: "¿Qué vegetación es típica de la Taiga?", options: ["Cactus", "Coníferas (pinos y abetos)", "Árboles de hoja caduca", "Hierbas de 2 metros"], correct: 1, icon: "fa-tree", color: "text-orange-700" },
+      { id: 39, question: "En el ecosistema, los seres vivos se relacionan con:", options: ["Otros planetas", "El medio físico y otros seres vivos", "Nada, viven aislados", "Solo con su familia"], correct: 1, icon: "fa-sync", color: "text-teal-400" },
+      { id: 40, question: "Escasez de lluvias y pocas especies vegetales definen a:", options: ["La Selva", "El Desierto cálido", "La Sabana", "El Río"], correct: 1, icon: "fa-sun", color: "text-orange-300" }
     ];
 
     const QUESTIONS_PER_GAME = 15;
-    const MAX_PLAYTIME = 30;
-    const STORAGE_KEY = 'ecoaventura_stats';
+    const NORMAL_MAX_PLAYTIME = 15;
+    const EXPERT_MAX_PLAYTIME = 30;
+    const STORAGE_KEY = 'ecoaventura_stats_expert';
+    const TIMER_SECONDS = 12;
 
     let currentQuestions = [];
     let currentIndex = 0;
     let score = 0;
+    let lives = 3;
+    let isExpertMode = false;
     let isLocked = false;
+    let timerInterval;
+    let timeLeft = TIMER_SECONDS;
 
     const appContainer = document.getElementById('app');
 
@@ -119,8 +128,7 @@
       renderStart();
     }
 
-    // --- LÓGICA DE PERSISTENCIA ---
-    function saveResult(score, percentage, playTime) {
+    function saveResult(score, percentage, playTime, mode) {
       const stats = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       const now = new Date();
       const record = {
@@ -128,19 +136,21 @@
         total: QUESTIONS_PER_GAME,
         percentage,
         playTime,
+        mode: mode ? 'EXPERTO' : 'NORMAL',
         date: now.toLocaleDateString(),
         time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
-      stats.unshift(record); // Añadir al principio
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(stats.slice(0, 50))); // Guardar últimos 50
+      stats.unshift(record);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stats.slice(0, 50)));
     }
 
     function getStats() {
       return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     }
 
-    // --- RENDERIZADO ---
-    function startGame() {
+    function startGame(expert = false) {
+      isExpertMode = expert;
+      lives = 3;
       currentQuestions = [...QUESTIONS_DATABASE]
         .sort(() => Math.random() - 0.5)
         .slice(0, QUESTIONS_PER_GAME);
@@ -158,26 +168,215 @@
                         <h1 class="text-2xl font-black italic tracking-tight uppercase">ECOAVENTURA</h1>
                     </div>
                 </div>
-                <div class="p-12 text-center space-y-8">
+                <div class="p-10 text-center space-y-8">
                     <div class="relative flex justify-center">
                         <div class="absolute inset-0 bg-indigo-200 blur-3xl opacity-40 animate-pulse rounded-full"></div>
                         <div class="relative w-32 h-32 bg-indigo-50 rounded-full flex items-center justify-center border-4 border-indigo-100 shadow-xl">
-                            <i class="fas fa-compass text-6xl text-indigo-600 animate-bounce-slow"></i>
+                            <i class="fas fa-globe-europe text-6xl text-indigo-600 animate-bounce-slow"></i>
                         </div>
                     </div>
                     <div class="space-y-4">
                         <h2 class="text-4xl font-black text-slate-900 uppercase leading-tight">Misión Ecosistemas</h2>
                         <p class="text-slate-500 text-lg leading-relaxed px-4">
-                            Completa 15 preguntas y consigue el <span class="font-bold text-indigo-600 underline">70% de aciertos</span> para ganar tiempo de juego.
+                            Completa 15 preguntas correctamente (mínimo 11) para ganar tiempo de juego.
                         </p>
                     </div>
-                    <div class="flex flex-col gap-4">
-                        <button onclick="startGame()" class="group flex items-center gap-4 mx-auto bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-6 rounded-3xl text-2xl font-black transition-all shadow-lg hover:scale-105 active:scale-95">
-                            ¡INICIAR RETO!
-                            <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                    <div class="flex flex-col gap-3">
+                        <button onclick="startGame(false)" class="group flex flex-col items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white p-5 rounded-3xl transition-all shadow-lg hover:scale-105 active:scale-95">
+                            <span class="text-xl font-black">MODO NORMAL</span>
+                            <span class="text-sm opacity-90 font-bold italic">Recompensa máx: ${NORMAL_MAX_PLAYTIME} min</span>
                         </button>
-                        <button onclick="renderStats()" class="text-indigo-600 font-bold hover:underline">
-                            <i class="fas fa-chart-bar mr-2"></i>Ver Historial de Estadísticas
+                        <button onclick="startGame(true)" class="group flex flex-col items-center justify-center bg-slate-900 hover:bg-black text-white p-5 rounded-3xl transition-all shadow-lg hover:scale-105 active:scale-95 border-b-4 border-red-500">
+                            <span class="text-xl font-black">MODO EXPERTO 🔥</span>
+                            <span class="text-sm text-red-300 font-bold italic">Recompensa máx: ${EXPERT_MAX_PLAYTIME} min</span>
+                        </button>
+                        <button onclick="renderStats()" class="text-indigo-600 font-bold hover:underline py-2">
+                            <i class="fas fa-chart-bar mr-2"></i>Ver Historial Completo
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Experto: 12 seg por pregunta • 3 vidas</p>
+                </div>
+            `;
+    }
+
+    function startTimer() {
+      if (!isExpertMode) return;
+      timeLeft = TIMER_SECONDS;
+      updateTimerUI();
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerUI();
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          handleAnswer(-1);
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI() {
+      const bar = document.getElementById('timer-bar');
+      if (bar) {
+        const perc = (timeLeft / TIMER_SECONDS) * 100;
+        bar.style.width = perc + '%';
+        if (timeLeft <= 3) bar.classList.replace('bg-indigo-500', 'bg-red-500');
+        else bar.classList.replace('bg-red-500', 'bg-indigo-500');
+      }
+    }
+
+    function renderQuiz() {
+      const question = currentQuestions[currentIndex];
+      const progress = ((currentIndex + 1) / QUESTIONS_PER_GAME) * 100;
+
+      appContainer.innerHTML = `
+                <div class="bg-gradient-to-r ${isExpertMode ? 'from-slate-800 to-red-900' : 'from-blue-500 to-emerald-500'} p-4 text-white flex justify-between items-center transition-all duration-500">
+                    <div class="flex items-center gap-2">
+                        <i class="fas ${isExpertMode ? 'fa-skull' : 'fa-tree'} text-lg"></i>
+                        <h1 class="text-lg font-black italic uppercase">${isExpertMode ? 'MODO EXPERTO' : 'ECOAVENTURA'}</h1>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        ${isExpertMode ? `<div class="flex gap-1 text-red-400">${Array(lives).fill('<i class="fas fa-heart"></i>').join('')}</div>` : ''}
+                        <div class="bg-black/20 px-4 py-1 rounded-full text-xs font-black border border-white/20">
+                            ${currentIndex + 1} / ${QUESTIONS_PER_GAME}
+                        </div>
+                    </div>
+                </div>
+
+                ${isExpertMode ? `<div class="h-2 w-full bg-slate-200"><div id="timer-bar" class="h-full bg-indigo-500 timer-bar" style="width: 100%"></div></div>` : ''}
+
+                <div class="p-8 md:p-10">
+                    <div class="mb-8 text-center">
+                        <div class="inline-flex p-5 bg-slate-50 rounded-[2rem] border-2 border-slate-100 shadow-inner mb-4">
+                            <i class="fas ${question.icon} text-4xl ${question.color}"></i>
+                        </div>
+                        <h2 class="text-xl md:text-2xl font-black text-slate-800 leading-tight min-h-[3rem]">
+                            ${question.question}
+                        </h2>
+                    </div>
+
+                    <div class="grid gap-3" id="options-container">
+                        ${question.options.map((option, idx) => `
+                            <button onclick="handleAnswer(${idx})" id="opt-${idx}" class="option-btn w-full p-4 text-left rounded-2xl border-4 border-slate-50 bg-slate-50 hover:border-indigo-400 hover:bg-indigo-50 hover:translate-x-1 transition-all text-lg font-bold flex justify-between items-center">
+                                <span class="pr-4 leading-tight">${option}</span>
+                                <span id="icon-${idx}"></span>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div class="mt-10 h-4 w-full bg-slate-100 rounded-full p-1 shadow-inner border border-slate-200">
+                        <div class="h-full bg-indigo-400 rounded-full transition-all duration-700 shadow-sm" style="width: ${progress}%"></div>
+                    </div>
+                </div>
+            `;
+      startTimer();
+    }
+
+    function handleAnswer(selectedIdx) {
+      if (isLocked) return;
+      isLocked = true;
+      clearInterval(timerInterval);
+
+      const question = currentQuestions[currentIndex];
+      const correctIdx = question.correct;
+      const isCorrect = selectedIdx === correctIdx;
+
+      if (isCorrect) {
+        score++;
+      } else {
+        if (isExpertMode) lives--;
+      }
+
+      const btns = document.querySelectorAll('.option-btn');
+      btns.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === correctIdx) {
+          btn.classList.replace('border-slate-50', 'border-green-500');
+          btn.classList.replace('bg-slate-50', 'bg-green-50');
+          btn.classList.add('text-green-700');
+          const iconEl = document.getElementById(`icon-${idx}`);
+          if (iconEl) iconEl.innerHTML = '<i class="fas fa-check-circle text-2xl text-green-500"></i>';
+        } else if (idx === selectedIdx && !isCorrect) {
+          btn.classList.replace('border-slate-50', 'border-red-500');
+          btn.classList.replace('bg-slate-50', 'bg-red-50');
+          btn.classList.add('text-red-700');
+          const iconEl = document.getElementById(`icon-${idx}`);
+          if (iconEl) iconEl.innerHTML = '<i class="fas fa-times-circle text-2xl text-red-500"></i>';
+        } else {
+          btn.classList.add('opacity-30', 'scale-95');
+        }
+      });
+
+      setTimeout(() => {
+        if (isExpertMode && lives <= 0) {
+          renderResult(true);
+        } else if (currentIndex < QUESTIONS_PER_GAME - 1) {
+          currentIndex++;
+          isLocked = false;
+          renderQuiz();
+        } else {
+          renderResult(false);
+        }
+      }, 1200);
+    }
+
+    function renderResult(isGameOver) {
+      clearInterval(timerInterval);
+      const percentage = Math.round((score / QUESTIONS_PER_GAME) * 100);
+      const isWinner = percentage >= 70 && !isGameOver;
+
+      // Recompensa: Modo Experto 2 min por respuesta (máx 30), Modo Normal 1 min por respuesta (máx 15)
+      const calculatedTime = isExpertMode ? score * 2 : score * 1;
+      const playTime = isWinner ? Math.floor(calculatedTime) : 0;
+
+      saveResult(score, percentage, playTime, isExpertMode);
+
+      appContainer.innerHTML = `
+                <div class="${isExpertMode ? 'bg-slate-900' : 'bg-indigo-600'} p-6 text-white flex justify-between items-center shadow-lg">
+                    <div class="flex items-center gap-3">
+                        <i class="fas ${isWinner ? 'fa-trophy' : 'fa-flag-checkered'} text-2xl text-yellow-400"></i>
+                        <h1 class="text-2xl font-black italic uppercase tracking-tight">RESULTADOS</h1>
+                    </div>
+                </div>
+                <div class="p-10 text-center space-y-8 bg-slate-50/30">
+                    <div class="relative">
+                        <div class="p-8 rounded-full inline-block shadow-2xl border-8 ${isWinner ? 'bg-yellow-100 border-yellow-200' : 'bg-slate-100 border-slate-200'}">
+                            <i class="fas ${isWinner ? 'fa-star text-yellow-500' : (isGameOver ? 'fa-skull-crossbones text-red-500' : 'fa-redo text-slate-400')} text-7xl"></i>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h2 class="text-3xl font-black text-slate-900 leading-none">
+                            ${isGameOver ? "¡GAME OVER!" : (isWinner ? "¡MISIÓN LOGRADA!" : "¡VUELVE A INTENTARLO!")}
+                        </h2>
+                        <div class="text-7xl font-black ${isWinner ? 'text-emerald-500' : (isGameOver ? 'text-red-500' : 'text-slate-400')}">${percentage}%</div>
+                        <p class="text-slate-500 font-bold text-lg">Has acertado ${score} de ${QUESTIONS_PER_GAME} preguntas.</p>
+                        <p class="text-xs font-black uppercase text-slate-400 tracking-widest mt-2">Dificultad: ${isExpertMode ? 'Experto 🔥' : 'Normal'}</p>
+                    </div>
+
+                    ${isWinner ? `
+                        <div class="bg-indigo-600 p-8 rounded-[3rem] text-white shadow-xl space-y-4 transform hover:scale-105 transition-transform border-b-8 border-indigo-800">
+                            <div class="flex justify-center gap-4 text-white/80 uppercase font-black tracking-widest text-sm">
+                                <i class="fas fa-gamepad"></i> RECOMPENSA OBTENIDA
+                            </div>
+                            <div class="text-6xl font-black flex items-center justify-center gap-4">
+                                <i class="fas fa-clock text-indigo-300"></i> ${playTime} MIN
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="bg-white border-4 border-red-50 p-8 rounded-[3rem] shadow-lg">
+                            <p class="text-slate-600 font-bold leading-relaxed px-4">
+                                ${isGameOver ? "Has perdido todas las vidas. ¡El modo experto requiere concentración máxima!" : "Necesitas al menos 11 aciertos para ganar tiempo de juego."}
+                            </p>
+                        </div>
+                    `}
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="renderStart()" class="bg-slate-900 hover:bg-black text-white p-5 rounded-2xl text-lg font-black transition-all shadow-xl active:scale-95">
+                            <i class="fas fa-home mr-2"></i>Inicio
+                        </button>
+                        <button onclick="renderStats()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 p-5 rounded-2xl text-lg font-black transition-all active:scale-95">
+                            <i class="fas fa-chart-bar mr-2"></i>Historial
                         </button>
                     </div>
                 </div>
@@ -201,24 +400,24 @@
                         ${stats.length === 0 ? `
                             <div class="text-center py-12 text-slate-400">
                                 <i class="fas fa-history text-4xl mb-4 opacity-20"></i>
-                                <p class="text-xl italic">Aún no has completado ninguna misión.</p>
+                                <p class="text-xl italic italic">Todavía no hay registros de misiones.</p>
                             </div>
                         ` : `
                             <div class="space-y-3">
                                 ${stats.map((s, idx) => `
                                     <div class="bg-slate-50 border-2 ${s.percentage >= 70 ? 'border-emerald-100' : 'border-slate-200'} p-4 rounded-2xl flex justify-between items-center">
                                         <div class="flex flex-col">
-                                            <span class="text-xs font-black text-slate-400 uppercase tracking-tighter">${s.date} • ${s.time}</span>
+                                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${s.date} • ${s.time} • MODO: ${s.mode || 'NORMAL'}</span>
                                             <span class="text-xl font-black ${s.percentage >= 70 ? 'text-emerald-600' : 'text-slate-600'}">
                                                 ${s.score}/${s.total} (${s.percentage}%)
                                             </span>
                                         </div>
                                         <div class="text-right">
                                             ${s.percentage >= 70 ? `
-                                                <div class="bg-emerald-500 text-white text-xs font-black px-3 py-1 rounded-full mb-1">ÉXITO</div>
+                                                <div class="bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1">ÉXITO</div>
                                                 <div class="text-sm font-bold text-slate-500">+${s.playTime} min</div>
                                             ` : `
-                                                <div class="bg-slate-300 text-white text-xs font-black px-3 py-1 rounded-full">INTENTO</div>
+                                                <div class="bg-slate-300 text-white text-[10px] font-black px-2 py-0.5 rounded-full">INTENTO</div>
                                             `}
                                         </div>
                                     </div>
@@ -226,148 +425,9 @@
                             </div>
                         `}
                     </div>
-                    <button onclick="startGame()" class="w-full mt-8 bg-indigo-600 text-white p-5 rounded-2xl text-xl font-black hover:bg-indigo-700 transition-all shadow-md">
-                        Jugar Nueva Partida
-                    </button>
-                </div>
-            `;
-    }
-
-    function renderQuiz() {
-      const question = currentQuestions[currentIndex];
-      const progress = ((currentIndex + 1) / QUESTIONS_PER_GAME) * 100;
-
-      appContainer.innerHTML = `
-                <div class="bg-gradient-to-r from-blue-500 to-emerald-500 p-6 text-white flex justify-between items-center transition-all duration-500">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-tree text-2xl bg-white/20 p-2 rounded-xl"></i>
-                        <h1 class="text-2xl font-black italic">ECOAVENTURA</h1>
-                    </div>
-                    <div class="bg-black/20 px-5 py-2 rounded-2xl text-sm font-black border border-white/20">
-                        PREGUNTA ${currentIndex + 1} / ${QUESTIONS_PER_GAME}
-                    </div>
-                </div>
-                <div class="p-8 md:p-12">
-                    <div class="mb-10 text-center">
-                        <div class="inline-flex p-6 bg-slate-50 rounded-[2rem] border-2 border-slate-100 shadow-inner mb-6 transform hover:rotate-6 transition-transform">
-                            <i class="fas ${question.icon} text-5xl ${question.color}"></i>
-                        </div>
-                        <h2 class="text-2xl md:text-3xl font-black text-slate-800 leading-tight">
-                            ${question.question}
-                        </h2>
-                    </div>
-
-                    <div class="grid gap-4" id="options-container">
-                        ${question.options.map((option, idx) => `
-                            <button onclick="handleAnswer(${idx})" id="opt-${idx}" class="option-btn w-full p-5 text-left rounded-2xl border-4 border-slate-50 bg-slate-50 hover:border-indigo-400 hover:bg-indigo-50 hover:translate-x-2 transition-all text-lg font-bold flex justify-between items-center">
-                                <span class="pr-4">${option}</span>
-                                <span id="icon-${idx}"></span>
-                            </button>
-                        `).join('')}
-                    </div>
-
-                    <div class="mt-12 h-6 w-full bg-slate-100 rounded-full p-1.5 shadow-inner border border-slate-200">
-                        <div class="h-full bg-indigo-500 rounded-full transition-all duration-700 shadow-sm" style="width: ${progress}%"></div>
-                    </div>
-                </div>
-            `;
-    }
-
-    function handleAnswer(selectedIdx) {
-      if (isLocked) return;
-      isLocked = true;
-
-      const question = currentQuestions[currentIndex];
-      const correctIdx = question.correct;
-      const isCorrect = selectedIdx === correctIdx;
-
-      if (isCorrect) score++;
-
-      const btns = document.querySelectorAll('.option-btn');
-      btns.forEach((btn, idx) => {
-        btn.disabled = true;
-        if (idx === correctIdx) {
-          btn.classList.replace('border-slate-50', 'border-green-500');
-          btn.classList.replace('bg-slate-50', 'bg-green-50');
-          btn.classList.add('text-green-700');
-          document.getElementById(`icon-${idx}`).innerHTML = '<i class="fas fa-check-circle text-2xl text-green-500"></i>';
-        } else if (idx === selectedIdx && !isCorrect) {
-          btn.classList.replace('border-slate-50', 'border-red-500');
-          btn.classList.replace('bg-slate-50', 'bg-red-50');
-          btn.classList.add('text-red-700');
-          document.getElementById(`icon-${idx}`).innerHTML = '<i class="fas fa-times-circle text-2xl text-red-500"></i>';
-        } else {
-          btn.classList.add('opacity-30', 'scale-95');
-        }
-      });
-
-      setTimeout(() => {
-        if (currentIndex < QUESTIONS_PER_GAME - 1) {
-          currentIndex++;
-          isLocked = false;
-          renderQuiz();
-        } else {
-          renderResult();
-        }
-      }, 1100);
-    }
-
-    function renderResult() {
-      const percentage = Math.round((score / QUESTIONS_PER_GAME) * 100);
-      const isWinner = percentage >= 70;
-      const calculatedTime = score * 2;
-      const playTime = isWinner ? Math.min(MAX_PLAYTIME, calculatedTime) : 0;
-
-      // Guardar en el historial
-      saveResult(score, percentage, playTime);
-
-      appContainer.innerHTML = `
-                <div class="bg-gradient-to-r from-indigo-600 to-violet-600 p-6 text-white flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-leaf text-2xl bg-white/20 p-2 rounded-xl"></i>
-                        <h1 class="text-2xl font-black italic uppercase tracking-tight">ECOAVENTURA</h1>
-                    </div>
-                </div>
-                <div class="p-10 text-center space-y-8 bg-slate-50/30">
-                    <div class="relative">
-                        <div class="p-8 rounded-full inline-block shadow-2xl border-8 ${isWinner ? 'bg-yellow-100 border-yellow-200' : 'bg-slate-100 border-slate-200'}">
-                            <i class="fas ${isWinner ? 'fa-trophy text-yellow-500' : 'fa-redo text-slate-400'} text-7xl"></i>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <h2 class="text-4xl font-black text-slate-900 leading-none">${isWinner ? "¡MISIÓN LOGRADA!" : "¡VUELVE A INTENTARLO!"}</h2>
-                        <div class="text-7xl font-black ${isWinner ? 'text-emerald-500' : 'text-slate-400'}">${percentage}%</div>
-                        <p class="text-slate-500 font-bold text-lg">Has acertado ${score} de ${QUESTIONS_PER_GAME} preguntas.</p>
-                    </div>
-
-                    ${isWinner ? `
-                        <div class="bg-indigo-600 p-8 rounded-[3rem] text-white shadow-xl space-y-4 transform hover:scale-105 transition-transform">
-                            <div class="flex justify-center gap-4 text-white/80 uppercase font-black tracking-widest text-sm">
-                                <i class="fas fa-gamepad"></i>
-                                RECOMPENSA DESBLOQUEADA
-                            </div>
-                            <div class="text-6xl font-black flex items-center justify-center gap-4">
-                                <i class="fas fa-clock text-indigo-300"></i>
-                                ${playTime} MIN
-                            </div>
-                        </div>
-                    ` : `
-                        <div class="bg-white border-4 border-red-50 p-8 rounded-[3rem] shadow-lg">
-                            <p class="text-slate-600 font-bold leading-relaxed px-4">
-                                Necesitas al menos <span class="text-red-500 font-black">11 aciertos</span> para ganar tiempo. <br/>
-                                El resultado se ha guardado en tu historial.
-                            </p>
-                        </div>
-                    `}
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="startGame()" class="bg-slate-900 hover:bg-black text-white p-5 rounded-2xl text-lg font-black transition-all shadow-xl active:scale-95">
-                            <i class="fas fa-sync-alt mr-2"></i>Reintentar
-                        </button>
-                        <button onclick="renderStats()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 p-5 rounded-2xl text-lg font-black transition-all active:scale-95">
-                            <i class="fas fa-chart-bar mr-2"></i>Historial
-                        </button>
+                    <div class="grid grid-cols-2 gap-4 mt-8">
+                         <button onclick="startGame(false)" class="bg-emerald-500 text-white p-4 rounded-xl text-sm font-black hover:bg-emerald-600 transition-all active:scale-95 shadow-md">Nuevo Normal</button>
+                         <button onclick="startGame(true)" class="bg-slate-900 text-white p-4 rounded-xl text-sm font-black hover:bg-black border-b-4 border-red-500 transition-all active:scale-95 shadow-md">Nuevo Experto</button>
                     </div>
                 </div>
             `;
