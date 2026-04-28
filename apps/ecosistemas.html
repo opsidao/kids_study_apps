@@ -60,7 +60,7 @@
 
   <div id="app"
     class="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border-8 border-white relative">
-    <!-- O conteúdo é gerado por JavaScript -->
+    <!-- El contenido se genera por JavaScript -->
   </div>
 
   <script>
@@ -148,12 +148,40 @@
       return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     }
 
+    // Función para barajar un array
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
     function startGame(expert = false) {
       isExpertMode = expert;
       lives = 3;
-      currentQuestions = [...QUESTIONS_DATABASE]
+
+      // 1. Seleccionar preguntas aleatorias
+      const selectedRaw = [...QUESTIONS_DATABASE]
         .sort(() => Math.random() - 0.5)
         .slice(0, QUESTIONS_PER_GAME);
+
+      // 2. Barajar las opciones de CADA pregunta seleccionada
+      currentQuestions = selectedRaw.map(q => {
+        const optionsWithMeta = q.options.map((text, index) => ({
+          text,
+          isCorrect: index === q.correct
+        }));
+
+        shuffleArray(optionsWithMeta);
+
+        return {
+          ...q,
+          options: optionsWithMeta.map(o => o.text),
+          correct: optionsWithMeta.findIndex(o => o.isCorrect)
+        };
+      });
+
       currentIndex = 0;
       score = 0;
       isLocked = false;
@@ -325,7 +353,6 @@
       const percentage = Math.round((score / QUESTIONS_PER_GAME) * 100);
       const isWinner = percentage >= 70 && !isGameOver;
 
-      // Recompensa: Modo Experto 2 min por respuesta (máx 30), Modo Normal 1 min por respuesta (máx 15)
       const calculatedTime = isExpertMode ? score * 2 : score * 1;
       const playTime = isWinner ? Math.floor(calculatedTime) : 0;
 
