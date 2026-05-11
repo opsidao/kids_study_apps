@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoMaster - Aprendizaje Geométrico</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .shape-container svg {
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+  <!-- Navegación -->
+  <header class="sticky top-0 z-10 backdrop-blur-md bg-white/70 border-b border-slate-200">
+    <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2 cursor-pointer group" onclick="navigate('home')">
+        <div class="bg-blue-600 p-1.5 rounded-lg group-hover:rotate-12 transition-transform text-white">
+          <i data-lucide="square"></i>
+        </div>
+        <h1 class="font-bold text-xl tracking-tight">Geo<span class="text-blue-600">Master</span></h1>
+      </div>
+      <nav class="flex gap-2">
+        <button onclick="navigate('study')" id="nav-study"
+          class="px-4 py-2 rounded-full text-sm font-medium transition-colors hover:bg-slate-100">Estudiar</button>
+        <button onclick="navigate('quiz')" id="nav-quiz"
+          class="px-4 py-2 rounded-full text-sm font-medium transition-colors hover:bg-slate-100">Práctica</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main id="app-container" class="max-w-4xl mx-auto px-4 py-12">
+    <!-- El contenido se inyecta mediante JavaScript -->
+  </main>
+
+  <footer id="footer-nav" class="max-w-4xl mx-auto px-4 py-8 border-t border-slate-200 text-center hidden">
+    <button onclick="navigate('home')"
+      class="text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-1 mx-auto">
+      <i data-lucide="chevron-left" class="w-4 h-4"></i> Volver al Inicio
+    </button>
+  </footer>
+
+  <script>
+    // --- Estado de la Aplicación ---
+    let currentView = 'home';
+    let quizState = {
+      currentQuestion: 0,
+      score: 0,
+      answered: false,
+      selectedOption: null
+    };
+
+    const QUIZ_QUESTIONS = [
+      {
+        question: "¿Qué tipo de líneas nunca se cruzan aunque se prolonguen?",
+        options: ["Secantes", "Paralelas", "Perpendiculares", "Curvas"],
+        answer: "Paralelas",
+        explanation: "Las líneas paralelas mantienen la misma distancia entre sí en todo momento."
+      },
+      {
+        question: "Observa la figura inferior. ¿Qué tipo de cuadrilátero es?",
+        visual: '<svg viewBox="0 0 200 120" class="w-full max-w-[200px] h-32 mx-auto mb-4 text-amber-500"><path d="M50 20 L150 20 L180 100 L20 100 Z" fill="none" stroke="currentColor" stroke-width="4" /></svg>',
+        options: ["Cuadrado", "Trapecio", "Rombo", "Rectángulo"],
+        answer: "Trapecio",
+        explanation: "Un trapecio es un cuadrilátero que tiene al menos un par de lados paralelos (en este caso, las bases)."
+      },
+      {
+        question: "¿Cómo llamarías a este triángulo según sus lados?",
+        visual: '<svg viewBox="0 0 200 160" class="w-full max-w-[200px] h-32 mx-auto mb-4 text-emerald-500"><polygon points="100,20 60,140 140,140" fill="none" stroke="currentColor" stroke-width="4" /></svg>',
+        options: ["Equilátero", "Isósceles", "Escaleno", "Rectángulo"],
+        answer: "Isósceles",
+        explanation: "Este triángulo tiene dos lados de igual longitud y uno diferente."
+      },
+      {
+        question: "En este plano, las líneas roja y azul representan calles...",
+        visual: '<svg viewBox="0 0 200 120" class="w-full max-w-[200px] h-32 mx-auto mb-4"><line x1="20" y1="60" x2="180" y2="60" stroke="red" stroke-width="4" /><line x1="100" y1="10" x2="100" y2="110" stroke="blue" stroke-width="4" /><rect x="100" y="50" width="10" height="10" fill="none" stroke="gray" stroke-width="1" /></svg>',
+        options: ["Paralelas", "Secantes no perpendiculares", "Perpendiculares", "Curvas"],
+        answer: "Perpendiculares",
+        explanation: "Las líneas se cortan formando un ángulo recto (90 grados)."
+      },
+      {
+        question: "Calcula el área de este cuadrado si su lado mide 6 cm.",
+        visual: '<svg viewBox="0 0 200 150" class="w-full max-w-[150px] h-32 mx-auto mb-4 text-blue-500"><rect x="40" y="20" width="120" height="110" fill="none" stroke="currentColor" stroke-width="4" /><text x="100" y="145" text-anchor="middle" fill="currentColor" font-weight="bold">6 cm</text></svg>',
+        options: ["12 cm²", "24 cm²", "36 cm²", "18 cm²"],
+        answer: "36 cm²",
+        explanation: "El área del cuadrado es lado por lado: $6 \\times 6 = 36$."
+      },
+      {
+        question: "¿Qué figura tiene todos sus lados iguales pero NO tiene ángulos rectos?",
+        options: ["Cuadrado", "Rectángulo", "Rombo", "Trapezoide"],
+        answer: "Rombo",
+        explanation: "El rombo tiene 4 lados iguales, pero sus ángulos suelen ser iguales dos a dos (agudos y obtusos)."
+      },
+      {
+        question: "Si este triángulo es equilátero y su lado mide 5 m, ¿cuál es su perímetro?",
+        visual: '<svg viewBox="0 0 200 160" class="w-full max-w-[200px] h-32 mx-auto mb-4 text-emerald-500"><polygon points="100,20 20,150 180,150" fill="none" stroke="currentColor" stroke-width="4" /><text x="100" y="145" text-anchor="middle" fill="currentColor" font-weight="bold" font-size="12">5 m</text></svg>',
+        options: ["10 m", "15 m", "25 m", "20 m"],
+        answer: "15 m",
+        explanation: "El perímetro es la suma de sus tres lados iguales: $5 + 5 + 5 = 15$ m."
+      },
+      {
+        question: "Las líneas de este dibujo son...",
+        visual: '<svg viewBox="0 0 200 120" class="w-full max-w-[200px] h-32 mx-auto mb-4 text-slate-400"><line x1="20" y1="30" x2="180" y2="90" stroke="currentColor" stroke-width="3" /><line x1="20" y1="100" x2="180" y2="20" stroke="currentColor" stroke-width="3" /></svg>',
+        options: ["Paralelas", "Perpendiculares", "Secantes", "Inexistentes"],
+        answer: "Secantes",
+        explanation: "Son líneas que se cortan en un punto pero no forman ángulos de 90 grados."
+      },
+      {
+        question: "Un triángulo con lados de 3cm, 4cm y 5cm es un triángulo...",
+        options: ["Equilátero", "Isósceles", "Escaleno", "Cuadrado"],
+        answer: "Escaleno",
+        explanation: "Al tener todos los lados de diferente medida, se clasifica como escaleno."
+      },
+      {
+        question: "¿Cuál de estos cuadriláteros tiene sus lados iguales dos a dos?",
+        options: ["Cuadrado", "Rombo", "Rectángulo", "Trapecio Isósceles"],
+        answer: "Rectángulo",
+        explanation: "El rectángulo tiene los lados opuestos iguales (base y altura diferencian la figura)."
+      }
+    ];
+
+    // --- Motores de Renderizado ---
+
+    function navigate(view) {
+      currentView = view;
+      updateNavUI();
+      render();
+      window.scrollTo(0, 0);
+    }
+
+    function updateNavUI() {
+      document.getElementById('nav-study').className = `px-4 py-2 rounded-full text-sm font-medium transition-colors ${currentView === 'study' ? 'bg-blue-100 text-blue-600' : 'hover:bg-slate-100'}`;
+      document.getElementById('nav-quiz').className = `px-4 py-2 rounded-full text-sm font-medium transition-colors ${currentView === 'quiz' ? 'bg-blue-100 text-blue-600' : 'hover:bg-slate-100'}`;
+      document.getElementById('footer-nav').classList.toggle('hidden', currentView === 'home');
+    }
+
+    function render() {
+      const container = document.getElementById('app-container');
+      container.innerHTML = '';
+
+      if (currentView === 'home') renderHome(container);
+      else if (currentView === 'study') renderStudy(container);
+      else if (currentView === 'quiz') renderQuiz(container);
+
+      lucide.createIcons();
+    }
+
+    function renderHome(container) {
+      const history = getHistory();
+
+      container.innerHTML = `
+                <div class="text-center max-w-3xl mx-auto fade-in">
+                    <h2 class="text-5xl font-extrabold mb-6 bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
+                        Domina la Geometría
+                    </h2>
+                    <p class="text-xl text-slate-600 mb-10 leading-relaxed">
+                        Prepárate para tu examen de forma interactiva con retos visuales.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+                        <button onclick="navigate('study')" class="group p-8 bg-white border border-slate-200 rounded-3xl shadow-xl shadow-slate-200/50 hover:border-blue-500 transition-all text-left">
+                            <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-4 text-blue-600 group-hover:scale-110 transition-transform">
+                                <i data-lucide="book-open"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Sección de Estudio</h3>
+                            <p class="text-slate-500 text-sm">Repasa conceptos con gráficos interactivos y tablas de fórmulas.</p>
+                        </button>
+                        <button onclick="startQuiz()" class="group p-8 bg-white border border-slate-200 rounded-3xl shadow-xl shadow-slate-200/50 hover:border-emerald-500 transition-all text-left">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mb-4 text-emerald-600 group-hover:scale-110 transition-transform">
+                                <i data-lucide="gamepad-2"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Simulacro de Examen</h3>
+                            <p class="text-slate-500 text-sm">Pon a prueba tus conocimientos con preguntas visuales y de razonamiento.</p>
+                        </button>
+                    </div>
+
+                    <!-- Sección de Historial -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm text-left">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold flex items-center gap-2">
+                                <i data-lucide="history" class="text-slate-400"></i> Historial de Progreso
+                            </h3>
+                            ${history.length > 0 ? `<button onclick="clearHistory()" class="text-xs text-rose-500 hover:underline font-medium">Borrar historial</button>` : ''}
+                        </div>
+
+                        ${history.length === 0 ? `
+                            <div class="py-8 text-center border-2 border-dashed border-slate-100 rounded-2xl">
+                                <p class="text-slate-400 italic">Aún no has realizado ningún examen. ¡Empieza uno hoy!</p>
+                            </div>
+                        ` : `
+                            <div class="max-h-64 overflow-y-auto custom-scrollbar pr-2">
+                                <div class="space-y-3">
+                                    ${history.map(item => `
+                                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-10 h-10 rounded-full ${item.percent >= 80 ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-100 text-blue-600'} flex items-center justify-center font-bold">
+                                                    ${item.percent}%
+                                                </div>
+                                                <div>
+                                                    <p class="font-bold text-slate-800">${item.score} / ${item.total} aciertos</p>
+                                                    <p class="text-xs text-slate-500">${item.date}</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-xs font-bold uppercase tracking-wider ${item.percent >= 50 ? 'text-emerald-500' : 'text-amber-500'}">
+                                                ${item.percent >= 80 ? 'Excelente' : (item.percent >= 50 ? 'Aprobado' : 'Revisar')}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+    }
+
+    function renderStudy(container) {
+      container.innerHTML = `
+                <div class="space-y-8 fade-in">
+                    <section>
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-blue-600">
+                            <i data-lucide="hash"></i> Líneas
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            ${renderLineCard('paralelas', '<line x1="20" y1="30" x2="180" y2="30" stroke="currentColor" stroke-width="4" /><line x1="20" y1="70" x2="180" y2="70" stroke="currentColor" stroke-width="4" />')}
+                            ${renderLineCard('perpendiculares', '<line x1="100" y1="10" x2="100" y2="90" stroke="currentColor" stroke-width="4" /><line x1="20" y1="50" x2="180" y2="50" stroke="currentColor" stroke-width="4" /><rect x="100" y="40" width="10" height="10" fill="none" stroke="red" stroke-width="2" />')}
+                            ${renderLineCard('secantes', '<line x1="20" y1="20" x2="180" y2="80" stroke="currentColor" stroke-width="4" /><line x1="20" y1="80" x2="180" y2="20" stroke="currentColor" stroke-width="4" />')}
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-emerald-600">
+                            <i data-lucide="triangle"></i> Triángulos
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            ${renderTriangleCard('equilátero', '100,10 20,150 180,150')}
+                            ${renderTriangleCard('isósceles', '100,10 50,150 150,150')}
+                            ${renderTriangleCard('escaleno', '60,10 20,150 180,120')}
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-amber-600">
+                            <i data-lucide="square"></i> Cuadriláteros y Fórmulas
+                        </h3>
+                        <div class="overflow-x-auto rounded-xl shadow-sm border border-slate-200">
+                            <table class="w-full text-left border-collapse bg-white">
+                                <thead class="bg-amber-50">
+                                    <tr>
+                                        <th class="p-4 font-bold border-b">Figura</th>
+                                        <th class="p-4 font-bold border-b">Propiedad</th>
+                                        <th class="p-4 font-bold border-b">Área</th>
+                                        <th class="p-4 font-bold border-b">Perímetro</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr><td class="p-4 font-semibold">Cuadrado</td><td class="p-4">4 lados iguales</td><td class="p-4">$l \\times l$</td><td class="p-4">$4 \\times l$</td></tr>
+                                    <tr><td class="p-4 font-semibold">Rectángulo</td><td class="p-4">Lados iguales 2 a 2</td><td class="p-4">$b \\times h$</td><td class="p-4">$2b + 2h$</td></tr>
+                                    <tr><td class="p-4 font-semibold">Rombo</td><td class="p-4">Lados iguales</td><td class="p-4">$\\frac{D \\times d}{2}$</td><td class="p-4">$4 \\times l$</td></tr>
+                                    <tr><td class="p-4 font-semibold">Trapecio</td><td class="p-4">2 lados paralelos</td><td class="p-4">$\\frac{(B + b) \\times h}{2}$</td><td class="p-4">Suma lados</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            `;
+    }
+
+    function renderLineCard(title, svgContent) {
+      return `
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center">
+                    <svg viewBox="0 0 200 100" class="w-full h-32 text-blue-500">${svgContent}</svg>
+                    <p class="mt-2 font-bold capitalize text-slate-700">${title}</p>
+                </div>
+            `;
+    }
+
+    function renderTriangleCard(title, points) {
+      return `
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center">
+                    <svg viewBox="0 0 200 160" class="w-full h-32 text-emerald-500">
+                        <polygon points="${points}" fill="none" stroke="currentColor" stroke-width="4" />
+                    </svg>
+                    <p class="mt-2 font-bold capitalize text-slate-700">${title}</p>
+                </div>
+            `;
+    }
+
+    // --- Lógica de Almacenamiento ---
+
+    function saveResult(score, total) {
+      const history = getHistory();
+      const newEntry = {
+        date: new Date().toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
+        score: score,
+        total: total,
+        percent: Math.round((score / total) * 100)
+      };
+      history.unshift(newEntry);
+      localStorage.setItem('geoMasterHistory', JSON.stringify(history.slice(0, 10)));
+    }
+
+    function getHistory() {
+      return JSON.parse(localStorage.getItem('geoMasterHistory') || '[]');
+    }
+
+    function clearHistory() {
+      localStorage.removeItem('geoMasterHistory');
+      render();
+    }
+
+    // --- Lógica del Quiz ---
+
+    function startQuiz() {
+      quizState = { currentQuestion: 0, score: 0, answered: false, selectedOption: null };
+      navigate('quiz');
+    }
+
+    function handleQuizAnswer(index) {
+      if (quizState.answered) return;
+      const q = QUIZ_QUESTIONS[quizState.currentQuestion];
+      quizState.selectedOption = q.options[index];
+      quizState.answered = true;
+      if (quizState.selectedOption === q.answer) quizState.score++;
+      render();
+    }
+
+    function nextQuestion() {
+      if (quizState.currentQuestion < QUIZ_QUESTIONS.length - 1) {
+        quizState.currentQuestion++;
+        quizState.answered = false;
+        quizState.selectedOption = null;
+        render();
+      } else {
+        saveResult(quizState.score, QUIZ_QUESTIONS.length);
+        renderQuizResult();
+      }
+    }
+
+    function renderQuiz(container) {
+      const q = QUIZ_QUESTIONS[quizState.currentQuestion];
+      const progress = ((quizState.currentQuestion + 1) / QUIZ_QUESTIONS.length) * 100;
+
+      container.innerHTML = `
+                <div class="max-w-2xl mx-auto fade-in">
+                    <div class="mb-6 flex items-center justify-between">
+                        <span class="text-sm font-bold uppercase tracking-wider text-slate-500">
+                            Pregunta ${quizState.currentQuestion + 1} de ${QUIZ_QUESTIONS.length}
+                        </span>
+                        <div class="h-2 flex-1 mx-4 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-blue-500 transition-all duration-300" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 mb-8 shadow-sm">
+                        ${q.visual ? `<div class="shape-container">${q.visual}</div>` : ''}
+                        <h3 class="text-2xl font-bold text-slate-800 text-center">${q.question}</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                        ${q.options.map((opt, i) => {
+        let btnClass = "bg-white border-slate-200 hover:border-blue-400";
+        let icon = "";
+        if (quizState.answered) {
+          if (opt === q.answer) {
+            btnClass = "bg-emerald-50 border-emerald-500 text-emerald-700";
+            icon = '<i data-lucide="check-circle-2" class="w-5 h-5"></i>';
+          } else if (opt === quizState.selectedOption) {
+            btnClass = "bg-rose-50 border-rose-500 text-rose-700";
+            icon = '<i data-lucide="x-circle" class="w-5 h-5"></i>';
+          } else {
+            btnClass = "bg-slate-50 opacity-50 border-slate-200";
+          }
+        }
+        return `
+                                <button onclick="handleQuizAnswer(${i})" ${quizState.answered ? 'disabled' : ''}
+                                    class="p-4 rounded-xl border-2 text-left transition-all font-semibold flex items-center justify-between ${btnClass}">
+                                    ${opt} ${icon}
+                                </button>
+                            `;
+      }).join('')}
+                    </div>
+
+                    ${quizState.answered ? `
+                        <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 mb-8 fade-in">
+                            <div class="flex gap-3">
+                                <i data-lucide="info" class="w-6 h-6 text-blue-600 flex-shrink-0"></i>
+                                <div>
+                                    <p class="font-bold text-blue-900">¿Sabías que...?</p>
+                                    <p class="text-blue-800">${q.explanation}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="nextQuestion()" class="w-full bg-slate-800 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-900 transition-colors shadow-lg">
+                            ${quizState.currentQuestion === QUIZ_QUESTIONS.length - 1 ? 'Ver Resultados' : 'Siguiente Pregunta'}
+                            <i data-lucide="chevron-right"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+    }
+
+    function renderQuizResult() {
+      const container = document.getElementById('app-container');
+      const percent = (quizState.score / QUIZ_QUESTIONS.length) * 100;
+      let message = "¡Buen intento! Sigue repasando.";
+      if (percent >= 80) message = "¡Eres un maestro de la geometría!";
+      else if (percent >= 50) message = "¡Vas por buen camino!";
+
+      container.innerHTML = `
+                <div class="text-center py-12 fade-in">
+                    <div class="relative inline-block mb-6">
+                        <div class="w-32 h-32 rounded-full border-8 border-slate-100 flex items-center justify-center">
+                            <span class="text-4xl font-black text-blue-600">${quizState.score}/${QUIZ_QUESTIONS.length}</span>
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 bg-emerald-500 text-white p-2 rounded-full shadow-lg">
+                            <i data-lucide="award" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-2">${message}</h3>
+                    <p class="text-slate-600 mb-10 text-lg text-emerald-600 font-bold">¡Resultado guardado en tu historial!</p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="navigate('home')" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="home"></i> Volver al Inicio
+                        </button>
+                        <button onclick="startQuiz()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-8 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="refresh-cw"></i> Repetir ahora
+                        </button>
+                    </div>
+                </div>
+            `;
+      lucide.createIcons();
+    }
+
+    // Inicializar
+    window.onload = () => {
+      render();
+    };
+
+  </script>
+</body>
+
+</html>
