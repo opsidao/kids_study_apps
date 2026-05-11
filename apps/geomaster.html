@@ -124,7 +124,7 @@
         visual: '<svg viewBox="0 0 200 150" class="w-full max-w-[150px] h-32 mx-auto mb-4 text-blue-500"><rect x="40" y="20" width="120" height="110" fill="none" stroke="currentColor" stroke-width="4" /><text x="100" y="145" text-anchor="middle" fill="currentColor" font-weight="bold">6 cm</text></svg>',
         options: ["12 cm²", "24 cm²", "36 cm²", "18 cm²"],
         answer: "36 cm²",
-        explanation: "El área del cuadrado es lado por lado: $6 \\times 6 = 36$."
+        explanation: "El área del cuadrado es lado por lado: 6 x 6 = 36."
       },
       {
         question: "¿Qué figura tiene todos sus lados iguales pero NO tiene ángulos rectos?",
@@ -137,7 +137,7 @@
         visual: '<svg viewBox="0 0 200 160" class="w-full max-w-[200px] h-32 mx-auto mb-4 text-emerald-500"><polygon points="100,20 20,150 180,150" fill="none" stroke="currentColor" stroke-width="4" /><text x="100" y="145" text-anchor="middle" fill="currentColor" font-weight="bold" font-size="12">5 m</text></svg>',
         options: ["10 m", "15 m", "25 m", "20 m"],
         answer: "15 m",
-        explanation: "El perímetro es la suma de sus tres lados iguales: $5 + 5 + 5 = 15$ m."
+        explanation: "El perímetro es la suma de sus tres lados iguales: 5 + 5 + 5 = 15 m."
       },
       {
         question: "Las líneas de este dibujo son...",
@@ -170,8 +170,12 @@
     }
 
     function updateNavUI() {
-      document.getElementById('nav-study').className = `px-4 py-2 rounded-full text-sm font-medium transition-colors ${currentView === 'study' ? 'bg-blue-100 text-blue-600' : 'hover:bg-slate-100'}`;
-      document.getElementById('nav-quiz').className = `px-4 py-2 rounded-full text-sm font-medium transition-colors ${currentView === 'quiz' ? 'bg-blue-100 text-blue-600' : 'hover:bg-slate-100'}`;
+      const studyBtn = document.getElementById('nav-study');
+      const quizBtn = document.getElementById('nav-quiz');
+      if (studyBtn && quizBtn) {
+        studyBtn.className = `px-4 py-2 rounded-full text-sm font-medium transition-colors ${currentView === 'study' ? 'bg-blue-100 text-blue-600' : 'hover:bg-slate-100'}`;
+        quizBtn.className = `px-4 py-2 rounded-full text-sm font-medium transition-colors ${currentView === 'quiz' ? 'bg-blue-100 text-blue-600' : 'hover:bg-slate-100'}`;
+      }
       document.getElementById('footer-nav').classList.toggle('hidden', currentView === 'home');
     }
 
@@ -191,11 +195,11 @@
 
       container.innerHTML = `
                 <div class="text-center max-w-3xl mx-auto fade-in">
-                    <h2 class="text-5xl font-extrabold mb-6 bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
+                    <h2 class="text-5xl font-extrabold mb-6 bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent leading-tight">
                         Domina la Geometría
                     </h2>
                     <p class="text-xl text-slate-600 mb-10 leading-relaxed">
-                        Prepárate para tu examen de forma interactiva con retos visuales.
+                        Aprende sobre áreas, perímetros y tipos de polígonos con nuestra guía interactiva.
                     </p>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
@@ -203,15 +207,15 @@
                             <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center mb-4 text-blue-600 group-hover:scale-110 transition-transform">
                                 <i data-lucide="book-open"></i>
                             </div>
-                            <h3 class="text-xl font-bold mb-2">Sección de Estudio</h3>
-                            <p class="text-slate-500 text-sm">Repasa conceptos con gráficos interactivos y tablas de fórmulas.</p>
+                            <h3 class="text-xl font-bold mb-2">Guía de Estudio</h3>
+                            <p class="text-slate-500 text-sm">Visualiza figuras y memoriza las fórmulas clave.</p>
                         </button>
                         <button onclick="startQuiz()" class="group p-8 bg-white border border-slate-200 rounded-3xl shadow-xl shadow-slate-200/50 hover:border-emerald-500 transition-all text-left">
                             <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mb-4 text-emerald-600 group-hover:scale-110 transition-transform">
                                 <i data-lucide="gamepad-2"></i>
                             </div>
-                            <h3 class="text-xl font-bold mb-2">Simulacro de Examen</h3>
-                            <p class="text-slate-500 text-sm">Pon a prueba tus conocimientos con preguntas visuales y de razonamiento.</p>
+                            <h3 class="text-xl font-bold mb-2">Ponerse a Prueba</h3>
+                            <p class="text-slate-500 text-sm">Resuelve retos visuales y mejora tus resultados.</p>
                         </button>
                     </div>
 
@@ -219,14 +223,14 @@
                     <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm text-left">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-xl font-bold flex items-center gap-2">
-                                <i data-lucide="history" class="text-slate-400"></i> Historial de Progreso
+                                <i data-lucide="history" class="text-slate-400"></i> Tus Resultados
                             </h3>
                             ${history.length > 0 ? `<button onclick="clearHistory()" class="text-xs text-rose-500 hover:underline font-medium">Borrar historial</button>` : ''}
                         </div>
 
                         ${history.length === 0 ? `
                             <div class="py-8 text-center border-2 border-dashed border-slate-100 rounded-2xl">
-                                <p class="text-slate-400 italic">Aún no has realizado ningún examen. ¡Empieza uno hoy!</p>
+                                <p class="text-slate-400 italic">No hay intentos registrados. ¡Es hora de empezar!</p>
                             </div>
                         ` : `
                             <div class="max-h-64 overflow-y-auto custom-scrollbar pr-2">
@@ -238,12 +242,9 @@
                                                     ${item.percent}%
                                                 </div>
                                                 <div>
-                                                    <p class="font-bold text-slate-800">${item.score} / ${item.total} aciertos</p>
+                                                    <p class="font-bold text-slate-800">${item.score} de ${item.total} aciertos</p>
                                                     <p class="text-xs text-slate-500">${item.date}</p>
                                                 </div>
-                                            </div>
-                                            <div class="text-xs font-bold uppercase tracking-wider ${item.percent >= 50 ? 'text-emerald-500' : 'text-amber-500'}">
-                                                ${item.percent >= 80 ? 'Excelente' : (item.percent >= 50 ? 'Aprobado' : 'Revisar')}
                                             </div>
                                         </div>
                                     `).join('')}
@@ -257,72 +258,123 @@
 
     function renderStudy(container) {
       container.innerHTML = `
-                <div class="space-y-8 fade-in">
+                <div class="space-y-12 fade-in">
+                    <!-- Sección de Líneas -->
                     <section>
-                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-blue-600">
-                            <i data-lucide="hash"></i> Líneas
+                        <h3 class="text-2xl font-bold mb-6 flex items-center gap-2 text-blue-600">
+                            <i data-lucide="hash"></i> Tipos de Líneas
                         </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            ${renderLineCard('paralelas', '<line x1="20" y1="30" x2="180" y2="30" stroke="currentColor" stroke-width="4" /><line x1="20" y1="70" x2="180" y2="70" stroke="currentColor" stroke-width="4" />')}
-                            ${renderLineCard('perpendiculares', '<line x1="100" y1="10" x2="100" y2="90" stroke="currentColor" stroke-width="4" /><line x1="20" y1="50" x2="180" y2="50" stroke="currentColor" stroke-width="4" /><rect x="100" y="40" width="10" height="10" fill="none" stroke="red" stroke-width="2" />')}
-                            ${renderLineCard('secantes', '<line x1="20" y1="20" x2="180" y2="80" stroke="currentColor" stroke-width="4" /><line x1="20" y1="80" x2="180" y2="20" stroke="currentColor" stroke-width="4" />')}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            ${renderLineCard('Paralelas', 'Nunca se cruzan.', '<line x1="20" y1="30" x2="180" y2="30" stroke="currentColor" stroke-width="4" /><line x1="20" y1="70" x2="180" y2="70" stroke="currentColor" stroke-width="4" />')}
+                            ${renderLineCard('Perpendiculares', 'Forman un ángulo de 90°.', '<line x1="100" y1="10" x2="100" y2="90" stroke="currentColor" stroke-width="4" /><line x1="20" y1="50" x2="180" y2="50" stroke="currentColor" stroke-width="4" /><rect x="100" y="40" width="10" height="10" fill="none" stroke="red" stroke-width="2" />')}
+                            ${renderLineCard('Secantes', 'Se cortan en un punto.', '<line x1="20" y1="20" x2="180" y2="80" stroke="currentColor" stroke-width="4" /><line x1="20" y1="80" x2="180" y2="20" stroke="currentColor" stroke-width="4" />')}
                         </div>
                     </section>
 
+                    <!-- Sección de Triángulos -->
                     <section>
-                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-emerald-600">
-                            <i data-lucide="triangle"></i> Triángulos
+                        <h3 class="text-2xl font-bold mb-6 flex items-center gap-2 text-emerald-600">
+                            <i data-lucide="triangle"></i> Clasificación de Triángulos
                         </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            ${renderTriangleCard('equilátero', '100,10 20,150 180,150')}
-                            ${renderTriangleCard('isósceles', '100,10 50,150 150,150')}
-                            ${renderTriangleCard('escaleno', '60,10 20,150 180,120')}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            ${renderTriangleCard('Equilátero', '3 lados iguales.', '100,10 20,150 180,150')}
+                            ${renderTriangleCard('Isósceles', '2 lados iguales.', '100,10 50,150 150,150')}
+                            ${renderTriangleCard('Escaleno', '0 lados iguales.', '60,10 20,150 180,120')}
                         </div>
                     </section>
 
+                    <!-- Sección de Fórmulas REHECHA -->
                     <section>
-                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-amber-600">
-                            <i data-lucide="square"></i> Cuadriláteros y Fórmulas
+                        <h3 class="text-2xl font-bold mb-6 flex items-center gap-2 text-amber-600">
+                            <i data-lucide="calculator"></i> Fórmulas de Área y Perímetro
                         </h3>
-                        <div class="overflow-x-auto rounded-xl shadow-sm border border-slate-200">
-                            <table class="w-full text-left border-collapse bg-white">
-                                <thead class="bg-amber-50">
-                                    <tr>
-                                        <th class="p-4 font-bold border-b">Figura</th>
-                                        <th class="p-4 font-bold border-b">Propiedad</th>
-                                        <th class="p-4 font-bold border-b">Área</th>
-                                        <th class="p-4 font-bold border-b">Perímetro</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    <tr><td class="p-4 font-semibold">Cuadrado</td><td class="p-4">4 lados iguales</td><td class="p-4">$l \\times l$</td><td class="p-4">$4 \\times l$</td></tr>
-                                    <tr><td class="p-4 font-semibold">Rectángulo</td><td class="p-4">Lados iguales 2 a 2</td><td class="p-4">$b \\times h$</td><td class="p-4">$2b + 2h$</td></tr>
-                                    <tr><td class="p-4 font-semibold">Rombo</td><td class="p-4">Lados iguales</td><td class="p-4">$\\frac{D \\times d}{2}$</td><td class="p-4">$4 \\times l$</td></tr>
-                                    <tr><td class="p-4 font-semibold">Trapecio</td><td class="p-4">2 lados paralelos</td><td class="p-4">$\\frac{(B + b) \\times h}{2}$</td><td class="p-4">Suma lados</td></tr>
-                                </tbody>
-                            </table>
+                        <div class="grid grid-cols-1 gap-4">
+                            <!-- Cabecera de la tabla (Desktop) -->
+                            <div class="hidden md:grid grid-cols-4 bg-amber-50 p-4 rounded-t-2xl border border-amber-100 font-bold text-amber-900">
+                                <div>Figura</div>
+                                <div>Partes clave</div>
+                                <div>Área (Superficie)</div>
+                                <div>Perímetro (Borde)</div>
+                            </div>
+
+                            <!-- Fila: Cuadrado -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 bg-white p-6 rounded-2xl md:rounded-none border border-slate-200 items-center gap-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-blue-100 p-2 rounded-lg text-blue-600"><i data-lucide="square" class="w-5 h-5"></i></div>
+                                    <span class="font-bold">Cuadrado</span>
+                                </div>
+                                <div class="text-sm text-slate-500"><span class="font-medium text-slate-700">L</span> = Lado</div>
+                                <div class="bg-slate-50 p-2 rounded-lg text-center md:text-left"><span class="text-blue-700 font-semibold">Lado × Lado</span></div>
+                                <div class="bg-slate-50 p-2 rounded-lg text-center md:text-left"><span class="text-slate-700 font-semibold">Lado × 4</span></div>
+                            </div>
+
+                            <!-- Fila: Rectángulo -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 bg-white p-6 md:rounded-none border border-slate-200 items-center gap-4 border-t-0">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-100 p-2 rounded-lg text-indigo-600"><i data-lucide="rectangle-horizontal" class="w-5 h-5"></i></div>
+                                    <span class="font-bold">Rectángulo</span>
+                                </div>
+                                <div class="text-sm text-slate-500"><span class="font-medium text-slate-700">b</span> (base), <span class="font-medium text-slate-700">h</span> (altura)</div>
+                                <div class="bg-slate-50 p-2 rounded-lg text-center md:text-left"><span class="text-blue-700 font-semibold">Base × Altura</span></div>
+                                <div class="bg-slate-50 p-2 rounded-lg text-center md:text-left"><span class="text-slate-700 font-semibold">Suma de los 4 lados</span></div>
+                            </div>
+
+                            <!-- Fila: Triángulo -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 bg-white p-6 md:rounded-none border border-slate-200 items-center gap-4 border-t-0">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600"><i data-lucide="triangle" class="w-5 h-5"></i></div>
+                                    <span class="font-bold">Triángulo</span>
+                                </div>
+                                <div class="text-sm text-slate-500"><span class="font-medium text-slate-700">b</span> (base), <span class="font-medium text-slate-700">h</span> (altura)</div>
+                                <div class="bg-slate-50 p-2 rounded-lg text-center md:text-left"><span class="text-blue-700 font-semibold">(Base × Altura) ÷ 2</span></div>
+                                <div class="bg-slate-50 p-2 rounded-lg text-center md:text-left"><span class="text-slate-700 font-semibold">Suma de los 3 lados</span></div>
+                            </div>
+
+                            <!-- Fila: Rombo -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 bg-white p-6 md:rounded-none border border-slate-200 items-center gap-4 border-t-0">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-rose-100 p-2 rounded-lg text-rose-600"><i data-lucide="diamond" class="w-5 h-5"></i></div>
+                                    <span class="font-bold">Rombo</span>
+                                </div>
+                                <div class="text-sm text-slate-500"><span class="font-medium text-slate-700">D</span> (mayor), <span class="font-medium text-slate-700">d</span> (menor)</div>
+                                <div class="bg-slate-50 p-2 rounded-lg text-center md:text-left"><span class="text-blue-700 font-semibold">(Diagonal × diagonal) ÷ 2</span></div>
+                                <div class="bg-slate-50 p-2 rounded-lg text-center md:text-left"><span class="text-slate-700 font-semibold">Lado × 4</span></div>
+                            </div>
+
+                            <!-- Fila: Trapecio -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 bg-white p-6 rounded-b-2xl border border-slate-200 items-center gap-4 border-t-0">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-amber-100 p-2 rounded-lg text-amber-600"><i data-lucide="trapezoid" class="w-5 h-5"></i></div>
+                                    <span class="font-bold">Trapecio</span>
+                                </div>
+                                <div class="text-sm text-slate-500"><span class="font-medium text-slate-700">B</span> (grande), <span class="font-medium text-slate-700">b</span> (pequeña)</div>
+                                <div class="bg-slate-50 p-2 rounded-lg text-center md:text-left text-xs"><span class="text-blue-700 font-semibold">[(Base+base) × altura] ÷ 2</span></div>
+                                <div class="bg-slate-50 p-2 rounded-lg text-center md:text-left"><span class="text-slate-700 font-semibold">Suma de los 4 lados</span></div>
+                            </div>
                         </div>
                     </section>
                 </div>
             `;
     }
 
-    function renderLineCard(title, svgContent) {
+    function renderLineCard(title, desc, svgContent) {
       return `
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center">
-                    <svg viewBox="0 0 200 100" class="w-full h-32 text-blue-500">${svgContent}</svg>
-                    <p class="mt-2 font-bold capitalize text-slate-700">${title}</p>
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 flex flex-col items-center shadow-sm">
+                    <svg viewBox="0 0 200 100" class="w-full h-24 text-blue-500 mb-4">${svgContent}</svg>
+                    <h4 class="font-bold text-lg text-slate-800">${title}</h4>
+                    <p class="text-slate-500 text-sm">${desc}</p>
                 </div>
             `;
     }
 
-    function renderTriangleCard(title, points) {
+    function renderTriangleCard(title, desc, points) {
       return `
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center">
-                    <svg viewBox="0 0 200 160" class="w-full h-32 text-emerald-500">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 flex flex-col items-center shadow-sm">
+                    <svg viewBox="0 0 200 160" class="w-full h-24 text-emerald-500 mb-4">
                         <polygon points="${points}" fill="none" stroke="currentColor" stroke-width="4" />
                     </svg>
-                    <p class="mt-2 font-bold capitalize text-slate-700">${title}</p>
+                    <h4 class="font-bold text-lg text-slate-800">${title}</h4>
+                    <p class="text-slate-500 text-sm">${desc}</p>
                 </div>
             `;
     }
@@ -332,7 +384,7 @@
     function saveResult(score, total) {
       const history = getHistory();
       const newEntry = {
-        date: new Date().toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
+        date: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
         score: score,
         total: total,
         percent: Math.round((score / total) * 100)
@@ -393,8 +445,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 mb-8 shadow-sm">
-                        ${q.visual ? `<div class="shape-container">${q.visual}</div>` : ''}
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200 mb-8 shadow-sm">
+                        ${q.visual ? `<div class="shape-container mb-6">${q.visual}</div>` : ''}
                         <h3 class="text-2xl font-bold text-slate-800 text-center">${q.question}</h3>
                     </div>
 
@@ -404,10 +456,10 @@
         let icon = "";
         if (quizState.answered) {
           if (opt === q.answer) {
-            btnClass = "bg-emerald-50 border-emerald-500 text-emerald-700";
+            btnClass = "bg-emerald-50 border-emerald-500 text-emerald-700 shadow-sm";
             icon = '<i data-lucide="check-circle-2" class="w-5 h-5"></i>';
           } else if (opt === quizState.selectedOption) {
-            btnClass = "bg-rose-50 border-rose-500 text-rose-700";
+            btnClass = "bg-rose-50 border-rose-500 text-rose-700 shadow-sm";
             icon = '<i data-lucide="x-circle" class="w-5 h-5"></i>';
           } else {
             btnClass = "bg-slate-50 opacity-50 border-slate-200";
@@ -415,7 +467,7 @@
         }
         return `
                                 <button onclick="handleQuizAnswer(${i})" ${quizState.answered ? 'disabled' : ''}
-                                    class="p-4 rounded-xl border-2 text-left transition-all font-semibold flex items-center justify-between ${btnClass}">
+                                    class="p-5 rounded-2xl border-2 text-left transition-all font-semibold flex items-center justify-between ${btnClass}">
                                     ${opt} ${icon}
                                 </button>
                             `;
@@ -423,17 +475,17 @@
                     </div>
 
                     ${quizState.answered ? `
-                        <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 mb-8 fade-in">
+                        <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 mb-8 fade-in">
                             <div class="flex gap-3">
                                 <i data-lucide="info" class="w-6 h-6 text-blue-600 flex-shrink-0"></i>
                                 <div>
-                                    <p class="font-bold text-blue-900">¿Sabías que...?</p>
+                                    <p class="font-bold text-blue-900 mb-1">Dato útil:</p>
                                     <p class="text-blue-800">${q.explanation}</p>
                                 </div>
                             </div>
                         </div>
-                        <button onclick="nextQuestion()" class="w-full bg-slate-800 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-900 transition-colors shadow-lg">
-                            ${quizState.currentQuestion === QUIZ_QUESTIONS.length - 1 ? 'Ver Resultados' : 'Siguiente Pregunta'}
+                        <button onclick="nextQuestion()" class="w-full bg-slate-800 text-white py-5 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-900 transition-colors shadow-lg">
+                            ${quizState.currentQuestion === QUIZ_QUESTIONS.length - 1 ? 'Ver Resultado Final' : 'Siguiente Reto'}
                             <i data-lucide="chevron-right"></i>
                         </button>
                     ` : ''}
@@ -444,29 +496,30 @@
     function renderQuizResult() {
       const container = document.getElementById('app-container');
       const percent = (quizState.score / QUIZ_QUESTIONS.length) * 100;
-      let message = "¡Buen intento! Sigue repasando.";
-      if (percent >= 80) message = "¡Eres un maestro de la geometría!";
-      else if (percent >= 50) message = "¡Vas por buen camino!";
+      let message = "¡Sigue practicando!";
+      let iconColor = "text-amber-500";
+      if (percent >= 80) { message = "¡Eres un experto!"; iconColor = "text-emerald-500"; }
+      else if (percent >= 50) { message = "¡Muy bien! Estás aprendiendo."; iconColor = "text-blue-500"; }
 
       container.innerHTML = `
-                <div class="text-center py-12 fade-in">
-                    <div class="relative inline-block mb-6">
-                        <div class="w-32 h-32 rounded-full border-8 border-slate-100 flex items-center justify-center">
-                            <span class="text-4xl font-black text-blue-600">${quizState.score}/${QUIZ_QUESTIONS.length}</span>
+                <div class="text-center py-12 fade-in max-w-md mx-auto">
+                    <div class="relative inline-block mb-8">
+                        <div class="w-40 h-40 rounded-full border-8 border-slate-100 flex items-center justify-center bg-white shadow-inner">
+                            <span class="text-5xl font-black text-slate-800">${quizState.score}<span class="text-2xl text-slate-400">/${QUIZ_QUESTIONS.length}</span></span>
                         </div>
-                        <div class="absolute -bottom-2 -right-2 bg-emerald-500 text-white p-2 rounded-full shadow-lg">
-                            <i data-lucide="award" class="w-6 h-6"></i>
+                        <div class="absolute -bottom-2 -right-2 bg-white text-emerald-500 p-3 rounded-full shadow-xl border border-slate-100">
+                            <i data-lucide="award" class="w-8 h-8"></i>
                         </div>
                     </div>
-                    <h3 class="text-3xl font-bold mb-2">${message}</h3>
-                    <p class="text-slate-600 mb-10 text-lg text-emerald-600 font-bold">¡Resultado guardado en tu historial!</p>
+                    <h3 class="text-3xl font-extrabold mb-3 text-slate-800">${message}</h3>
+                    <p class="text-slate-500 mb-10 text-lg">Tu esfuerzo está dando frutos. Tus resultados han sido guardados.</p>
 
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button onclick="navigate('home')" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2">
-                            <i data-lucide="home"></i> Volver al Inicio
+                    <div class="flex flex-col gap-3">
+                        <button onclick="navigate('home')" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="home"></i> Ir al menú principal
                         </button>
-                        <button onclick="startQuiz()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-8 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2">
-                            <i data-lucide="refresh-cw"></i> Repetir ahora
+                        <button onclick="startQuiz()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-8 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="refresh-cw"></i> Intentarlo de nuevo
                         </button>
                     </div>
                 </div>
