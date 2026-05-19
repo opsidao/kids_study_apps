@@ -39,15 +39,15 @@
 
 <body class="p-4 md:p-8 flex items-center justify-center">
 
-    <div id="app" class="w-full max-w-2xl card p-8 text-center">
+    <div id="app" class="w-full max-w-2xl card p-8 text-center my-4">
         <!-- Pantalla de Inicio -->
         <div id="start-screen">
-            <h1 class="text-4xl font-bold text-orange-600 mb-4">¡Aventura de Verbos! 🚀</h1>
+            <h1 class="text-4xl font-bold text-orange-600 mb-2">¡Aventura de Verbos! 🚀</h1>
             <p class="text-gray-700 text-lg mb-6">Demuestra cuánto inglés sabes. ¡Responde 10 preguntas y consigue el 10
                 perfecto!</p>
 
             <!-- Selector de Página de Estudio -->
-            <div class="bg-orange-50 p-5 rounded-2xl mb-8 border border-orange-100">
+            <div class="bg-orange-50 p-5 rounded-2xl mb-6 border border-orange-100">
                 <h3 class="text-md font-bold text-orange-800 mb-3 uppercase tracking-wider">¿Qué página quieres estudiar
                     hoy?</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -74,15 +74,50 @@
                 </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
                 <button onclick="showReview()"
-                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-full text-xl transition-all transform hover:scale-105 shadow-lg">
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-full text-xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
                     📖 Repasar Verbos
                 </button>
                 <button onclick="startRound()"
-                    class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-full text-2xl transition-all transform hover:scale-105 shadow-lg">
-                    ¡Empezar Ronda!
+                    class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-full text-2xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
+                    🎯 ¡Empezar!
                 </button>
+            </div>
+
+            <!-- Panel de Estadísticas e Historial -->
+            <div class="border-t border-orange-100 pt-6 text-left">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-700 flex items-center gap-2">
+                        📊 Tu Historial de Superación
+                    </h3>
+                    <button id="clear-history-btn" onclick="openConfirmModal()"
+                        class="text-xs text-red-400 hover:text-red-600 font-bold transition-all hidden">
+                        🗑️ Borrar Todo
+                    </button>
+                </div>
+
+                <!-- Tarjetas de Stats Rápidas -->
+                <div id="stats-container" class="grid grid-cols-3 gap-3 mb-4 hidden">
+                    <div class="bg-blue-50 border border-blue-100 p-3 rounded-2xl text-center">
+                        <span class="block text-xs text-gray-500">Jugadas</span>
+                        <span id="stat-total" class="text-xl font-bold text-blue-700">-</span>
+                    </div>
+                    <div class="bg-green-50 border border-green-100 p-3 rounded-2xl text-center">
+                        <span class="block text-xs text-gray-500">Perfectas</span>
+                        <span id="stat-perfect" class="text-xl font-bold text-green-700">🏆 -</span>
+                    </div>
+                    <div class="bg-yellow-50 border border-yellow-100 p-3 rounded-2xl text-center">
+                        <span class="block text-xs text-gray-500">Nota Media</span>
+                        <span id="stat-average" class="text-xl font-bold text-yellow-700">-</span>
+                    </div>
+                </div>
+
+                <!-- Lista de intentos -->
+                <div class="overflow-y-auto max-h-48 pr-1 space-y-2" id="history-list">
+                    <p class="text-gray-400 text-center text-sm py-4">¡Aún no has jugado ninguna ronda! Juega una
+                        partida para guardar tu récord.</p>
+                </div>
             </div>
         </div>
 
@@ -171,6 +206,26 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmación para Borrar Historial -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden">
+        <div
+            class="bg-white p-6 rounded-3xl max-w-sm w-full mx-4 text-center shadow-2xl transform scale-95 transition-all">
+            <h3 class="text-2xl font-bold text-red-600 mb-2">¿Estás seguro? ⚠️</h3>
+            <p class="text-gray-600 mb-6 text-sm">Vas a borrar de forma permanente todas tus copas, estrellas e
+                historial de notas.</p>
+            <div class="flex gap-4 justify-center">
+                <button onclick="closeConfirmModal()"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 px-6 rounded-full transition-all">
+                    No, cancelar
+                </button>
+                <button onclick="confirmClearHistory()"
+                    class="bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 px-6 rounded-full transition-all shadow-md">
+                    Sí, borrar todo
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const verbs = [
             // Página 1 (Los iniciales de la primera hoja)
@@ -233,6 +288,7 @@
 
         window.onload = function () {
             updatePageSelectorUI();
+            renderHistory();
         };
 
         function selectPage(page) {
@@ -270,6 +326,7 @@
         function showStart() {
             document.getElementById('review-screen').classList.add('hidden');
             document.getElementById('start-screen').classList.remove('hidden');
+            renderHistory();
         }
 
         function showReview() {
@@ -305,7 +362,6 @@
             const filtered = getFilteredVerbs();
             const shuffled = [...filtered].sort(() => 0.5 - Math.random());
 
-            // Elegir aleatoriamente entre Infinitive, Past, Participle, o Meaning (Significado)
             currentRoundData = shuffled.slice(0, 10).map(v => {
                 const fields = ['inf', 'past', 'part', 'meaning'];
                 const target = fields[Math.floor(Math.random() * 4)];
@@ -345,16 +401,13 @@
 
             Object.values(cols).forEach(col => col.innerHTML = '');
 
-            // Si el objetivo es adivinar el significado en español
             if (current.target === 'meaning') {
-                // Modificar banner para pedir entrada del significado
                 bannerContainer.className = "mb-5 bg-blue-100 text-blue-800 py-3 px-6 rounded-2xl font-bold text-xl flex flex-col sm:flex-row items-center justify-center gap-3 shadow-sm w-full";
                 bannerContainer.innerHTML = `
                     <span class="whitespace-nowrap">🇪🇸 Escribe el significado:</span>
                     <input type="text" id="user-input" autocomplete="off" class="w-full max-w-xs p-2 border-2 border-blue-300 rounded-xl text-center text-blue-900 input-focus font-semibold" placeholder="¿Qué significa?" value="${current.userAnswer}">
                 `;
 
-                // Mostrar las columnas de inglés totalmente visibles como pistas
                 Object.keys(cols).forEach(key => {
                     const label = key === 'inf' ? 'Infinitive' : (key === 'past' ? 'Past Simple' : 'Past Participle');
                     cols[key].innerHTML = `
@@ -365,14 +418,12 @@
                     `;
                 });
             } else {
-                // Si el objetivo es adivinar una forma en inglés (Infinitive, Past o Participle)
                 bannerContainer.className = "mb-5 bg-blue-100 text-blue-800 py-3 px-6 rounded-2xl font-bold text-xl inline-flex items-center gap-2 shadow-sm w-full justify-center";
                 bannerContainer.innerHTML = `
                     <span>🇪🇸 Significado:</span>
                     <span class="text-blue-950 underline decoration-blue-400">${current.fullVerb.meaning}</span>
                 `;
 
-                // Mostrar las columnas correspondientes colocando un input en el target
                 Object.keys(cols).forEach(key => {
                     const label = key === 'inf' ? 'Infinitive' : (key === 'past' ? 'Past Simple' : 'Past Participle');
                     if (key === current.target) {
@@ -393,7 +444,6 @@
                 });
             }
 
-            // Control de visibilidad del botón "Volver"
             const prevBtn = document.getElementById('prev-btn');
             if (currentIndex > 0) {
                 prevBtn.classList.remove('invisible');
@@ -447,16 +497,13 @@
                 let isCorrect = false;
 
                 if (res.target === 'meaning') {
-                    // Validación en español para múltiples alternativas
                     if (correct === answer) {
                         isCorrect = true;
                     } else {
-                        // Dividimos por comas o barras para comprobar partes sueltas, por ejemplo "conocer" en "saber, conocer"
                         const alternatives = correct.split(/[,/]/).map(s => s.trim().toLowerCase());
                         isCorrect = alternatives.includes(answer);
                     }
                 } else {
-                    // Validación en inglés
                     if (correct.includes('/')) {
                         isCorrect = correct.split('/').map(s => s.trim().toLowerCase()).includes(answer);
                     } else {
@@ -467,7 +514,103 @@
                 res.isCorrect = isCorrect;
                 if (isCorrect) score++;
             });
+
+            // GUARDAR en el historial en LocalStorage
+            saveToHistory(score, selectedPage);
+
             showResults();
+        }
+
+        // --- SISTEMA DE LOCAL STORAGE PARA HISTORIAL ---
+        function saveToHistory(finalScore, page) {
+            try {
+                const history = JSON.parse(localStorage.getItem('verbs_study_history') || '[]');
+                const pageLabel = page === 'all' ? 'Todas' : `Pág. ${page}`;
+                const newAttempt = {
+                    date: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' }),
+                    time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+                    score: finalScore,
+                    page: pageLabel,
+                    timestamp: Date.now()
+                };
+                history.unshift(newAttempt); // Colocar al principio
+                localStorage.setItem('verbs_study_history', JSON.stringify(history));
+            } catch (e) {
+                console.error("No se pudo guardar en LocalStorage", e);
+            }
+        }
+
+        function renderHistory() {
+            const historyList = document.getElementById('history-list');
+            const statsContainer = document.getElementById('stats-container');
+            const clearBtn = document.getElementById('clear-history-btn');
+
+            let history = [];
+            try {
+                history = JSON.parse(localStorage.getItem('verbs_study_history') || '[]');
+            } catch (e) {
+                history = [];
+            }
+
+            if (history.length === 0) {
+                historyList.innerHTML = `<p class="text-gray-400 text-center text-sm py-4">¡Aún no has jugado ninguna ronda! Tus resultados aparecerán aquí.</p>`;
+                statsContainer.classList.add('hidden');
+                clearBtn.classList.add('hidden');
+                return;
+            }
+
+            // Mostrar secciones de stats e historial
+            statsContainer.classList.remove('hidden');
+            clearBtn.classList.remove('hidden');
+
+            // Calcular Stats
+            const totalRounds = history.length;
+            const perfectRounds = history.filter(item => item.score === 10).length;
+            const sumScores = history.reduce((acc, item) => acc + item.score, 0);
+            const avgScore = (sumScores / totalRounds).toFixed(1);
+
+            document.getElementById('stat-total').innerText = totalRounds;
+            document.getElementById('stat-perfect').innerText = `🏆 ${perfectRounds}`;
+            document.getElementById('stat-average').innerText = `${avgScore} / 10`;
+
+            // Construir Lista
+            historyList.innerHTML = '';
+            history.forEach(item => {
+                const isPerfect = item.score === 10;
+                const scoreBg = isPerfect ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700';
+
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center p-3 rounded-xl bg-white border border-gray-100 hover:shadow-sm transition-all";
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-xl">${isPerfect ? '👑' : '⭐'}</span>
+                        <div>
+                            <span class="font-bold text-gray-700 text-sm">${item.page}</span>
+                            <span class="text-xs text-gray-400 block">${item.date} a las ${item.time}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-500 font-semibold">${isPerfect ? '¡Perfecto!' : ''}</span>
+                        <span class="font-bold px-3 py-1 rounded-full text-sm ${scoreBg}">${item.score} / 10</span>
+                    </div>
+                `;
+                historyList.appendChild(div);
+            });
+        }
+
+        // Modales personalizados para confirmar borrado de historial
+        function openConfirmModal() {
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
+
+        function confirmClearHistory() {
+            localStorage.removeItem('verbs_study_history');
+            closeConfirmModal();
+            renderHistory();
         }
 
         function showResults() {
@@ -528,8 +671,8 @@
                 title.className = "text-4xl font-bold text-green-600 mb-4";
                 message.innerHTML = `Has acertado <strong>${score} de 10</strong>. ¡Eres un maestro de los verbos!<br><br><span class="text-2xl text-orange-600 font-bold animate-bounce block">¡CORRE A ENSEÑÁRSELO A PAPÁ! 🏆</span>`;
                 buttons.innerHTML = `
-                    <button onclick="startRound()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full transition-all">
-                        Jugar otra vez
+                    <button onclick="showStart()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full transition-all">
+                        Ir al Inicio / Historial
                     </button>
                 `;
             } else {
@@ -537,9 +680,14 @@
                 title.className = "text-4xl font-bold text-orange-500 mb-4";
                 message.innerHTML = `Has conseguido <strong>${score} de 10</strong>. <br>¡Necesitas un 10 perfecto para ganar! Sigue intentándolo.`;
                 buttons.innerHTML = `
-                    <button onclick="startRound()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-full text-xl transition-all shadow-lg">
-                        ¡Intentar el 10 perfecto!
-                    </button>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <button onclick="showStart()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full transition-all">
+                            Ir al Inicio
+                        </button>
+                        <button onclick="startRound()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full transition-all shadow-lg">
+                            ¡Intentar el 10 perfecto!
+                        </button>
+                    </div>
                 `;
             }
         }
