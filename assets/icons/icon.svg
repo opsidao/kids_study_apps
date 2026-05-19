@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img"
+  aria-labelledby="title desc">
+  <title id="title">Estudiar app icon</title>
+  <desc id="desc">Book and spark icon for study app</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+    <linearGradient id="book" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98" />
+      <stop offset="100%" stop-color="#ecfeff" stop-opacity="0.98" />
+    </linearGradient>
+  </defs>
+  <rect x="28" y="28" width="456" height="456" rx="106" fill="url(#bg)" />
+  <path
+    d="M256 126c-25 0-50 8-71 24-22 16-33 35-33 58v146c0 16 13 29 29 29 6 0 11-2 16-5 38-27 94-27 132 0 10 7 23 7 32 0 38-27 94-27 132 0 5 3 10 5 16 5 16 0 29-13 29-29V208c0-23-11-42-33-58-21-16-46-24-71-24-31 0-61 12-84 32-23-20-53-32-84-32z"
+    fill="url(#book)" />
+  <path d="M256 156v183" stroke="#0f766e" stroke-width="16" stroke-linecap="round" opacity="0.35" />
+  <path d="M189 211c19-13 42-20 67-20M189 255c19-13 42-20 67-20M189 299c19-13 42-20 67-20"
+    stroke="#0f766e" stroke-width="13" stroke-linecap="round" opacity="0.45" />
+  <path d="M323 211c-19-13-42-20-67-20M323 255c-19-13-42-20-67-20M323 299c-19-13-42-20-67-20"
+    stroke="#0284c7" stroke-width="13" stroke-linecap="round" opacity="0.45" />
+  <path d="M370 98l8 20 20 8-20 8-8 20-8-20-20-8 20-8z" fill="#fef08a" />
+</svg>
