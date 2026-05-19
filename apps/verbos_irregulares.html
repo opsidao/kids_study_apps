@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,38 +13,74 @@
             background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
             min-height: 100vh;
         }
+
         .card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 2rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+
         .input-focus:focus {
             outline: none;
             border-color: #fda085;
             box-shadow: 0 0 0 4px rgba(253, 160, 133, 0.3);
         }
+
         .review-table th {
             background-color: #ffedd5;
             color: #9a3412;
         }
+
         .review-table td {
             border-bottom: 1px solid #fed7aa;
         }
     </style>
 </head>
+
 <body class="p-4 md:p-8 flex items-center justify-center">
 
     <div id="app" class="w-full max-w-2xl card p-8 text-center">
         <!-- Pantalla de Inicio -->
         <div id="start-screen">
-            <h1 class="text-4xl font-bold text-orange-600 mb-6">¡Aventura de Verbos! 🚀</h1>
-            <p class="text-gray-700 text-xl mb-8">¿Estás listo para demostrar cuánto sabes de inglés? <br> Responde 10 preguntas y consigue las 10 para ganar.</p>
-            
+            <h1 class="text-4xl font-bold text-orange-600 mb-4">¡Aventura de Verbos! 🚀</h1>
+            <p class="text-gray-700 text-lg mb-6">Demuestra cuánto inglés sabes. ¡Responde 10 preguntas y consigue el 10
+                perfecto!</p>
+
+            <!-- Selector de Página de Estudio -->
+            <div class="bg-orange-50 p-5 rounded-2xl mb-8 border border-orange-100">
+                <h3 class="text-md font-bold text-orange-800 mb-3 uppercase tracking-wider">¿Qué página quieres estudiar
+                    hoy?</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button id="btn-page-1" onclick="selectPage(1)"
+                        class="p-3 rounded-xl border-2 border-orange-200 bg-white font-bold text-sm text-orange-700 hover:border-orange-400 transition-all flex flex-col items-center justify-center">
+                        <span>Pág. 1</span>
+                        <span class="text-[10px] font-normal text-gray-400">be ... do</span>
+                    </button>
+                    <button id="btn-page-2" onclick="selectPage(2)"
+                        class="p-3 rounded-xl border-2 border-orange-200 bg-white font-bold text-sm text-orange-700 hover:border-orange-400 transition-all flex flex-col items-center justify-center">
+                        <span>Pág. 2</span>
+                        <span class="text-[10px] font-normal text-gray-400">draw ... go</span>
+                    </button>
+                    <button id="btn-page-3" onclick="selectPage(3)"
+                        class="p-3 rounded-xl border-2 border-orange-200 bg-white font-bold text-sm text-orange-700 hover:border-orange-400 transition-all flex flex-col items-center justify-center">
+                        <span>Pág. 3</span>
+                        <span class="text-[10px] font-normal text-gray-400">keep ... sing</span>
+                    </button>
+                    <button id="btn-page-all" onclick="selectPage('all')"
+                        class="p-3 rounded-xl border-2 border-orange-200 bg-white font-bold text-sm text-orange-700 hover:border-orange-400 transition-all flex flex-col items-center justify-center">
+                        <span>🌟 ¡Todas!</span>
+                        <span class="text-[10px] font-normal text-gray-400">Reto total</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onclick="showReview()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-full text-xl transition-all transform hover:scale-105 shadow-lg">
+                <button onclick="showReview()"
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-full text-xl transition-all transform hover:scale-105 shadow-lg">
                     📖 Repasar Verbos
                 </button>
-                <button onclick="startRound()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-full text-2xl transition-all transform hover:scale-105 shadow-lg">
+                <button onclick="startRound()"
+                    class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-full text-2xl transition-all transform hover:scale-105 shadow-lg">
                     ¡Empezar Ronda!
                 </button>
             </div>
@@ -52,17 +89,21 @@
         <!-- Pantalla de Repaso -->
         <div id="review-screen" class="hidden text-left">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-orange-600">Lista de Verbos</h2>
+                <div>
+                    <h2 class="text-2xl font-bold text-orange-600">Verbos para Estudiar</h2>
+                    <p id="review-subtitle" class="text-sm text-gray-500"></p>
+                </div>
                 <button onclick="showStart()" class="text-orange-500 font-bold hover:underline">← Volver</button>
             </div>
-            
-            <div class="overflow-y-auto max-h-[60vh] rounded-xl border border-orange-200">
+
+            <div class="overflow-y-auto max-h-[50vh] rounded-xl border border-orange-200">
                 <table class="w-full review-table text-left border-collapse">
-                    <thead class="sticky top-0">
+                    <thead class="sticky top-0 shadow">
                         <tr>
                             <th class="p-3 text-sm uppercase tracking-wider">Infinitive</th>
                             <th class="p-3 text-sm uppercase tracking-wider">Past Simple</th>
                             <th class="p-3 text-sm uppercase tracking-wider">Past Participle</th>
+                            <th class="p-3 text-sm uppercase tracking-wider">Significado</th>
                         </tr>
                     </thead>
                     <tbody id="review-body" class="bg-white">
@@ -71,19 +112,27 @@
                 </table>
             </div>
 
-            <button onclick="startRound()" class="w-full mt-6 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-2xl text-xl transition-all">
+            <button onclick="startRound()"
+                class="w-full mt-6 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-2xl text-xl transition-all">
                 ¡Estoy listo, empezar!
             </button>
         </div>
 
         <!-- Pantalla de Juego -->
         <div id="game-screen" class="hidden">
-            <div class="flex justify-between items-center mb-6">
-                <span id="question-counter" class="bg-orange-100 text-orange-700 font-bold py-2 px-4 rounded-full">Pregunta 1 de 10</span>
-                <span id="score-live" class="text-gray-500 font-semibold"></span>
+            <div class="flex justify-between items-center mb-4">
+                <span id="question-counter"
+                    class="bg-orange-100 text-orange-700 font-bold py-2 px-4 rounded-full">Pregunta 1 de 10</span>
+                <span id="active-study-page" class="text-gray-400 text-sm font-semibold"></span>
             </div>
-            
-            <div class="bg-orange-50 p-6 rounded-2xl mb-8">
+
+            <!-- Contenedor del Banner con el Significado / Traducción -->
+            <div id="banner-container"
+                class="mb-5 bg-blue-100 text-blue-800 py-3 px-6 rounded-2xl font-bold text-xl inline-flex items-center gap-2 shadow-sm w-full justify-center">
+                <!-- Se rellena dinámicamente -->
+            </div>
+
+            <div class="bg-orange-50 p-6 rounded-2xl mb-8 border border-orange-100">
                 <h2 class="text-gray-600 uppercase tracking-widest text-sm font-bold mb-4">Completa el hueco:</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                     <div id="col-infinitive" class="text-2xl font-bold text-gray-800"></div>
@@ -93,10 +142,12 @@
             </div>
 
             <div class="flex flex-col sm:flex-row gap-3">
-                <button id="prev-btn" onclick="prevQuestion()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-4 px-6 rounded-2xl text-xl transition-all invisible">
+                <button id="prev-btn" onclick="prevQuestion()"
+                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-4 px-6 rounded-2xl text-xl transition-all invisible">
                     Volver
                 </button>
-                <button id="next-btn" onclick="nextQuestion()" class="flex-[2] bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-2xl text-xl transition-all">
+                <button id="next-btn" onclick="nextQuestion()"
+                    class="flex-[2] bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-2xl text-xl transition-all">
                     Siguiente
                 </button>
             </div>
@@ -106,7 +157,7 @@
         <div id="result-screen" class="hidden">
             <h2 id="result-title" class="text-4xl font-bold mb-4"></h2>
             <div id="result-message" class="text-xl mb-6"></div>
-            
+
             <div class="text-left mb-8 overflow-y-auto max-h-96 pr-2">
                 <h3 class="font-bold text-gray-700 mb-4 border-bottom border-gray-200">Resumen de tus respuestas:</h3>
                 <ul id="results-list" class="space-y-3">
@@ -122,27 +173,99 @@
 
     <script>
         const verbs = [
-            { inf: "be", past: "was/were", part: "been" },
-            { inf: "beat", past: "beat", part: "beaten" },
-            { inf: "become", past: "became", part: "become" },
-            { inf: "begin", past: "began", part: "begun" },
-            { inf: "bend", past: "bent", part: "bent" },
-            { inf: "bite", past: "bit", part: "bitten" },
-            { inf: "break", past: "broke", part: "broken" },
-            { inf: "bring", past: "brought", part: "brought" },
-            { inf: "build", past: "built", part: "built" },
-            { inf: "buy", past: "bought", part: "bought" },
-            { inf: "catch", past: "caught", part: "caught" },
-            { inf: "choose", past: "chose", part: "chosen" },
-            { inf: "come", past: "came", part: "come" },
-            { inf: "cut", past: "cut", part: "cut" },
-            { inf: "do", past: "did", part: "done" }
+            // Página 1 (Los iniciales de la primera hoja)
+            { inf: "be", past: "was/were", part: "been", meaning: "ser / estar", page: 1 },
+            { inf: "beat", past: "beat", part: "beaten", meaning: "golpear / batir", page: 1 },
+            { inf: "become", past: "became", part: "become", meaning: "llegar a ser / convertirse", page: 1 },
+            { inf: "begin", past: "began", part: "begun", meaning: "empezar", page: 1 },
+            { inf: "bend", past: "bent", part: "bent", meaning: "doblar", page: 1 },
+            { inf: "bite", past: "bit", part: "bitten", meaning: "morder", page: 1 },
+            { inf: "break", past: "broke", part: "broken", meaning: "romper", page: 1 },
+            { inf: "bring", past: "brought", part: "brought", meaning: "traer", page: 1 },
+            { inf: "build", past: "built", part: "built", meaning: "construir", page: 1 },
+            { inf: "buy", past: "bought", part: "bought", meaning: "comprar", page: 1 },
+            { inf: "catch", past: "caught", part: "caught", meaning: "atrapar / coger", page: 1 },
+            { inf: "choose", past: "chose", part: "chosen", meaning: "elegir", page: 1 },
+            { inf: "come", past: "came", part: "come", meaning: "venir", page: 1 },
+            { inf: "cut", past: "cut", part: "cut", meaning: "cortar", page: 1 },
+            { inf: "do", past: "did", part: "done", meaning: "hacer", page: 1 },
+
+            // Página 2 (Primera hoja del PDF)
+            { inf: "draw", past: "drew", part: "drawn", meaning: "dibujar", page: 2 },
+            { inf: "dream", past: "dreamt", part: "dreamt", meaning: "soñar", page: 2 },
+            { inf: "drink", past: "drank", part: "drunk", meaning: "beber", page: 2 },
+            { inf: "drive", past: "drove", part: "driven", meaning: "conducir", page: 2 },
+            { inf: "eat", past: "ate", part: "eaten", meaning: "comer", page: 2 },
+            { inf: "fall", past: "fell", part: "fallen", meaning: "caer", page: 2 },
+            { inf: "feel", past: "felt", part: "felt", meaning: "sentir", page: 2 },
+            { inf: "fight", past: "fought", part: "fought", meaning: "pelear", page: 2 },
+            { inf: "find", past: "found", part: "found", meaning: "encontrar", page: 2 },
+            { inf: "fly", past: "flew", part: "flown", meaning: "volar", page: 2 },
+            { inf: "forget", past: "forgot", part: "forgotten", meaning: "olvidar", page: 2 },
+            { inf: "freeze", past: "froze", part: "frozen", meaning: "congelar", page: 2 },
+            { inf: "get", past: "got", part: "got", meaning: "conseguir", page: 2 },
+            { inf: "give", past: "gave", part: "given", meaning: "dar", page: 2 },
+            { inf: "go", past: "went", part: "gone", meaning: "ir", page: 2 },
+
+            // Página 3 (Segunda hoja del PDF)
+            { inf: "keep", past: "kept", part: "kept", meaning: "mantener", page: 3 },
+            { inf: "know", past: "knew", part: "known", meaning: "saber, conocer", page: 3 },
+            { inf: "learn", past: "learnt", part: "learnt", meaning: "aprender", page: 3 },
+            { inf: "leave", past: "left", part: "left", meaning: "dejar, marchar", page: 3 },
+            { inf: "lose", past: "lost", part: "lost", meaning: "perder", page: 3 },
+            { inf: "make", past: "made", part: "made", meaning: "hacer, fabricar", page: 3 },
+            { inf: "meet", past: "met", part: "met", meaning: "conocer", page: 3 },
+            { inf: "pay", past: "paid", part: "paid", meaning: "pagar", page: 3 },
+            { inf: "put", past: "put", part: "put", meaning: "poner", page: 3 },
+            { inf: "read", past: "read", part: "read", meaning: "leer", page: 3 },
+            { inf: "run", past: "ran", part: "run", meaning: "correr", page: 3 },
+            { inf: "see", past: "saw", part: "seen", meaning: "ver", page: 3 },
+            { inf: "sell", past: "sold", part: "sold", meaning: "vender", page: 3 },
+            { inf: "send", past: "sent", part: "sent", meaning: "enviar", page: 3 },
+            { inf: "sing", past: "sang", part: "sung", meaning: "cantar", page: 3 }
         ];
 
-        let currentRoundData = []; // Verbos seleccionados
+        let selectedPage = 1;
+        let currentRoundData = [];
         let currentIndex = 0;
         let score = 0;
-        let userResponses = []; // Respuestas guardadas del usuario
+        let userResponses = [];
+
+        window.onload = function () {
+            updatePageSelectorUI();
+        };
+
+        function selectPage(page) {
+            selectedPage = page;
+            updatePageSelectorUI();
+        }
+
+        function updatePageSelectorUI() {
+            const btnIds = {
+                1: 'btn-page-1',
+                2: 'btn-page-2',
+                3: 'btn-page-3',
+                'all': 'btn-page-all'
+            };
+
+            Object.keys(btnIds).forEach(key => {
+                const btn = document.getElementById(btnIds[key]);
+                if (key == selectedPage) {
+                    btn.classList.add('bg-orange-500', 'text-white', 'border-orange-600');
+                    btn.classList.remove('bg-white', 'text-orange-700', 'border-orange-200');
+                } else {
+                    btn.classList.remove('bg-orange-500', 'text-white', 'border-orange-600');
+                    btn.classList.add('bg-white', 'text-orange-700', 'border-orange-200');
+                }
+            });
+        }
+
+        function getFilteredVerbs() {
+            if (selectedPage === 'all') {
+                return [...verbs];
+            }
+            return verbs.filter(v => v.page === parseInt(selectedPage));
+        }
 
         function showStart() {
             document.getElementById('review-screen').classList.add('hidden');
@@ -152,10 +275,23 @@
         function showReview() {
             const body = document.getElementById('review-body');
             body.innerHTML = '';
-            verbs.forEach(v => {
+
+            const filtered = getFilteredVerbs();
+
+            const subtitle = document.getElementById('review-subtitle');
+            subtitle.innerText = selectedPage === 'all'
+                ? 'Viendo las 3 páginas de estudio juntas (45 verbos)'
+                : `Viendo los 15 verbos de la Página ${selectedPage}`;
+
+            filtered.forEach(v => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-orange-50 transition-colors";
-                tr.innerHTML = `<td class="p-3 font-bold text-gray-700">${v.inf}</td><td class="p-3 text-gray-600">${v.past}</td><td class="p-3 text-gray-600">${v.part}</td>`;
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-gray-700">${v.inf}</td>
+                    <td class="p-3 text-gray-600">${v.past}</td>
+                    <td class="p-3 text-gray-600">${v.part}</td>
+                    <td class="p-3 text-blue-600 italic text-sm font-semibold">${v.meaning}</td>
+                `;
                 body.appendChild(tr);
             });
             document.getElementById('start-screen').classList.add('hidden');
@@ -165,16 +301,17 @@
         function startRound() {
             currentIndex = 0;
             score = 0;
-            
-            // Elegir 10 verbos aleatorios y preparar el estado de respuestas
-            const shuffled = [...verbs].sort(() => 0.5 - Math.random());
+
+            const filtered = getFilteredVerbs();
+            const shuffled = [...filtered].sort(() => 0.5 - Math.random());
+
+            // Elegir aleatoriamente entre Infinitive, Past, Participle, o Meaning (Significado)
             currentRoundData = shuffled.slice(0, 10).map(v => {
-                const fields = ['inf', 'past', 'part'];
-                const target = fields[Math.floor(Math.random() * 3)];
+                const fields = ['inf', 'past', 'part', 'meaning'];
+                const target = fields[Math.floor(Math.random() * 4)];
                 return { ...v, target };
             });
 
-            // Inicializar array de respuestas vacío
             userResponses = currentRoundData.map(v => ({
                 verb: v.inf,
                 fullVerb: v,
@@ -193,19 +330,13 @@
         function showQuestion() {
             const current = userResponses[currentIndex];
             document.getElementById('question-counter').innerText = `Pregunta ${currentIndex + 1} de 10`;
-            
-            // Control de visibilidad del botón "Volver"
-            const prevBtn = document.getElementById('prev-btn');
-            if (currentIndex > 0) {
-                prevBtn.classList.remove('invisible');
-            } else {
-                prevBtn.classList.add('invisible');
-            }
 
-            // Cambiar texto del botón "Siguiente" en la última pregunta
-            const nextBtn = document.getElementById('next-btn');
-            nextBtn.innerText = (currentIndex === 9) ? "Finalizar" : "Siguiente";
+            const pageIndicator = document.getElementById('active-study-page');
+            pageIndicator.innerText = selectedPage === 'all'
+                ? `Estudiando: Todas las Páginas`
+                : `Estudiando: Página ${selectedPage}`;
 
+            const bannerContainer = document.getElementById('banner-container');
             const cols = {
                 inf: document.getElementById('col-infinitive'),
                 past: document.getElementById('col-past'),
@@ -214,32 +345,71 @@
 
             Object.values(cols).forEach(col => col.innerHTML = '');
 
-            Object.keys(cols).forEach(key => {
-                const label = key === 'inf' ? 'Infinitive' : (key === 'past' ? 'Past Simple' : 'Past Participle');
-                if (key === current.target) {
-                    cols[key].innerHTML = `
-                        <div class="flex flex-col">
-                            <span class="text-xs text-orange-400 mb-1">${label}</span>
-                            <input type="text" id="user-input" autocomplete="off" class="w-full p-2 border-2 border-orange-200 rounded-xl text-center input-focus" placeholder="..." value="${current.userAnswer}">
-                        </div>
-                    `;
-                } else {
+            // Si el objetivo es adivinar el significado en español
+            if (current.target === 'meaning') {
+                // Modificar banner para pedir entrada del significado
+                bannerContainer.className = "mb-5 bg-blue-100 text-blue-800 py-3 px-6 rounded-2xl font-bold text-xl flex flex-col sm:flex-row items-center justify-center gap-3 shadow-sm w-full";
+                bannerContainer.innerHTML = `
+                    <span class="whitespace-nowrap">🇪🇸 Escribe el significado:</span>
+                    <input type="text" id="user-input" autocomplete="off" class="w-full max-w-xs p-2 border-2 border-blue-300 rounded-xl text-center text-blue-900 input-focus font-semibold" placeholder="¿Qué significa?" value="${current.userAnswer}">
+                `;
+
+                // Mostrar las columnas de inglés totalmente visibles como pistas
+                Object.keys(cols).forEach(key => {
+                    const label = key === 'inf' ? 'Infinitive' : (key === 'past' ? 'Past Simple' : 'Past Participle');
                     cols[key].innerHTML = `
                         <div class="flex flex-col">
                             <span class="text-xs text-gray-400 mb-1">${label}</span>
-                            <span>${current.fullVerb[key]}</span>
+                            <span class="text-gray-800">${current.fullVerb[key]}</span>
                         </div>
                     `;
-                }
-            });
+                });
+            } else {
+                // Si el objetivo es adivinar una forma en inglés (Infinitive, Past o Participle)
+                bannerContainer.className = "mb-5 bg-blue-100 text-blue-800 py-3 px-6 rounded-2xl font-bold text-xl inline-flex items-center gap-2 shadow-sm w-full justify-center";
+                bannerContainer.innerHTML = `
+                    <span>🇪🇸 Significado:</span>
+                    <span class="text-blue-950 underline decoration-blue-400">${current.fullVerb.meaning}</span>
+                `;
+
+                // Mostrar las columnas correspondientes colocando un input en el target
+                Object.keys(cols).forEach(key => {
+                    const label = key === 'inf' ? 'Infinitive' : (key === 'past' ? 'Past Simple' : 'Past Participle');
+                    if (key === current.target) {
+                        cols[key].innerHTML = `
+                            <div class="flex flex-col">
+                                <span class="text-xs text-orange-400 mb-1">${label}</span>
+                                <input type="text" id="user-input" autocomplete="off" class="w-full p-2 border-2 border-orange-200 rounded-xl text-center input-focus" placeholder="..." value="${current.userAnswer}">
+                            </div>
+                        `;
+                    } else {
+                        cols[key].innerHTML = `
+                            <div class="flex flex-col">
+                                <span class="text-xs text-gray-400 mb-1">${label}</span>
+                                <span>${current.fullVerb[key]}</span>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            // Control de visibilidad del botón "Volver"
+            const prevBtn = document.getElementById('prev-btn');
+            if (currentIndex > 0) {
+                prevBtn.classList.remove('invisible');
+            } else {
+                prevBtn.classList.add('invisible');
+            }
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.innerText = (currentIndex === 9) ? "Finalizar" : "Siguiente";
 
             setTimeout(() => {
                 const input = document.getElementById('user-input');
-                if(input) {
+                if (input) {
                     input.focus();
-                    // Seleccionar el texto si ya hay algo escrito para facilitar el borrado
                     input.select();
-                    input.onkeypress = (e) => { if(e.key === 'Enter') nextQuestion(); };
+                    input.onkeypress = (e) => { if (e.key === 'Enter') nextQuestion(); };
                 }
             }, 50);
         }
@@ -273,12 +443,27 @@
             score = 0;
             userResponses.forEach(res => {
                 const correct = res.correctAnswer.toLowerCase();
+                const answer = res.userAnswer.trim().toLowerCase();
                 let isCorrect = false;
-                if (correct.includes('/')) {
-                    isCorrect = correct.split('/').includes(res.userAnswer);
+
+                if (res.target === 'meaning') {
+                    // Validación en español para múltiples alternativas
+                    if (correct === answer) {
+                        isCorrect = true;
+                    } else {
+                        // Dividimos por comas o barras para comprobar partes sueltas, por ejemplo "conocer" en "saber, conocer"
+                        const alternatives = correct.split(/[,/]/).map(s => s.trim().toLowerCase());
+                        isCorrect = alternatives.includes(answer);
+                    }
                 } else {
-                    isCorrect = (res.userAnswer === correct);
+                    // Validación en inglés
+                    if (correct.includes('/')) {
+                        isCorrect = correct.split('/').map(s => s.trim().toLowerCase()).includes(answer);
+                    } else {
+                        isCorrect = (answer === correct);
+                    }
                 }
+
                 res.isCorrect = isCorrect;
                 if (isCorrect) score++;
             });
@@ -295,22 +480,23 @@
             const buttons = document.getElementById('action-buttons');
 
             list.innerHTML = '';
-            
+
             const targetLabels = {
                 inf: "infinitivo",
                 past: "pasado simple",
-                part: "participio pasado"
+                part: "participio pasado",
+                meaning: "significado"
             };
 
             const sortedResponses = [...userResponses].sort((a, b) => b.isCorrect - a.isCorrect);
 
             sortedResponses.forEach(res => {
                 const li = document.createElement('li');
-                li.className = "p-3 rounded-xl border flex flex-col md:flex-row md:justify-between items-start md:items-center " + 
-                              (res.isCorrect ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200");
-                
-                const verbInfo = `<span class="font-bold text-gray-800">${res.fullVerb.inf} - ${res.fullVerb.past} - ${res.fullVerb.part}</span>`;
-                
+                li.className = "p-3 rounded-xl border flex flex-col md:flex-row md:justify-between items-start md:items-center " +
+                    (res.isCorrect ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200");
+
+                const verbInfo = `<span class="font-bold text-gray-800">${res.fullVerb.inf} - ${res.fullVerb.past} - ${res.fullVerb.part} <span class="text-blue-600 font-normal">(${res.fullVerb.meaning})</span></span>`;
+
                 if (res.isCorrect) {
                     li.innerHTML = `
                         <div class="flex items-center">
@@ -359,4 +545,5 @@
         }
     </script>
 </body>
+
 </html>
